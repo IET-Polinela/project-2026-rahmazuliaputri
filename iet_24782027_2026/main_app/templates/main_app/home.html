@@ -1,1 +1,57 @@
-<h1>Selamat Datang di Kota Bandung</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar Laporan - Enha City</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .report-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            width: 600px;
+        }
+
+        .report-card h3 {
+            margin-top: 0;
+        }
+
+        .btn-link {
+            display: inline-block;
+            margin-right: 10px;
+            text-decoration: none;
+            color: blue;
+        }
+
+        .add-link {
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Daftar Laporan - Enha City</h1>
+
+    <a class="add-link" href="{% url 'add_report' %}">Tambah Laporan</a>
+
+    {% for report in reports %}
+        <div class="report-card">
+            <h3>{{ report.title }}</h3>
+            <p><strong>Category:</strong> {{ report.category }}</p>
+            <p><strong>Description:</strong> {{ report.description }}</p>
+            <p><strong>Location:</strong> {{ report.location }}</p>
+            <p><strong>Status:</strong> {{ report.status }}</p>
+
+            <a class="btn-link" href="{% url 'update_report' report.id %}">Edit</a>
+            <a class="btn-link" href="{% url 'delete_report' report.id %}">Delete</a>
+        </div>
+    {% empty %}
+        <p>Belum ada laporan.</p>
+    {% endfor %}
+</body>
+</html>

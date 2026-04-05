@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tambah Laporan - Enha City</title>
+</head>
+<body>
+    <h1>Tambah Laporan - Enha City</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <p>
+            <label for="{{ form.title.id_for_label }}">Title:</label>
+            {{ form.title }}
+        </p>
+
+        <p>
+            <label for="{{ form.category.id_for_label }}">Category:</label>
+            {{ form.category }}
+        </p>
+
+        <p>
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            {{ form.description }}
+        </p>
+
+        <p>
+            <label for="{{ form.location.id_for_label }}">Location:</label>
+            {{ form.location }}
+        </p>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

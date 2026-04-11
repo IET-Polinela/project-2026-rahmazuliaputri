@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Laporan - EnhaReport</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #fff1f7, #ffe4f1, #fbcfe8);
+            min-height: 100vh;
+            color: #6b214d;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 0 60px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            margin: 0;
+            color: #9d174d;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 12px 22px;
+            border-radius: 999px;
+            font-weight: 600;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-home {
+            background: white;
+            color: #be185d;
+            border: 2px solid #f9a8d4;
+        }
+
+        .btn-add {
+            background: #ec4899;
+            color: white;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.82);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 10px 28px rgba(190, 24, 93, 0.10);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 14px;
+            color: #9d174d;
+        }
+
+        .card p {
+            margin: 8px 0;
+            line-height: 1.7;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: #fce7f3;
+            color: #be185d;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .actions {
+            margin-top: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-detail {
+            background: #f9a8d4;
+            color: #831843;
+        }
+
+        .btn-edit {
+            background: #fbcfe8;
+            color: #831843;
+        }
+
+        .btn-delete {
+            background: #be185d;
+            color: white;
+        }
+
+        .btn-workflow {
+            background: #ec4899;
+            color: white;
+        }
+
+        form {
+            display: inline;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="topbar">
+            <h1>Daftar Laporan</h1>
+            <div class="top-actions">
+                <a href="{% url 'home' %}" class="btn btn-home">Kembali ke Home</a>
+                <a href="{% url 'report_create' %}" class="btn btn-add">+ Laporkan Masalah</a>
+            </div>
+        </div>
+
+        {% for report in reports %}
+            <div class="card">
+                <h3>{{ report.title }}</h3>
+                <p><strong>Kategori:</strong> {{ report.category }}</p>
+                <p><strong>Deskripsi:</strong> {{ report.description }}</p>
+                <p><strong>Lokasi:</strong> {{ report.location }}</p>
+                <span class="status-badge">{{ report.status }}</span>
+
+                <div class="actions">
+                    <a href="{% url 'report_detail' report.pk %}" class="btn btn-detail">Detail</a>
+                    <a href="{% url 'report_update' report.pk %}" class="btn btn-edit">Edit</a>
+                    <a href="{% url 'report_delete' report.pk %}" class="btn btn-delete">Delete</a>
+
+                    {% if report.status == 'REPORTED' %}
+                        <form method="post" action="{% url 'report_update_status' report.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="VERIFIED">
+                            <button type="submit" class="btn btn-workflow">Ubah ke VERIFIED</button>
+                        </form>
+                    {% elif report.status == 'VERIFIED' %}
+                        <form method="post" action="{% url 'report_update_status' report.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="IN_PROGRESS">
+                            <button type="submit" class="btn btn-workflow">Ubah ke IN PROGRESS</button>
+                        </form>
+                    {% elif report.status == 'IN_PROGRESS' %}
+                        <form method="post" action="{% url 'report_update_status' report.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="RESOLVED">
+                            <button type="submit" class="btn btn-workflow">Ubah ke RESOLVED</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty">
+                <p>Belum ada laporan yang tersedia.</p>
+            </div>
+        {% endfor %}
+
+    </div>
+</body>
+</html>

@@ -6,13 +6,13 @@
 <body>
     <h1>Hapus Laporan - Enha City</h1>
 
-    <p>Apakah kamu yakin ingin menghapus laporan: <strong>{{ report.title }}</strong>?</p>
+    <p>Apakah kamu yakin ingin menghapus laporan: <strong>{{ object.title }}</strong>?</p>
 
     <form method="POST">
         {% csrf_token %}
         <button type="submit">Ya, Hapus</button>
     </form>
 
-    <a href="{% url 'home' %}">Batal</a>
+    <a href="{% url 'report_list' %}">Batal</a>
 </body>
 </html>

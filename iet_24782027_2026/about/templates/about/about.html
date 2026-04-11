@@ -1,12 +1,117 @@
-<h1>About</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - EnhaReport</title>
 
-<p>
-Website ini merupakan contoh aplikasi web sederhana yang dibuat
-menggunakan framework Django untuk mempelajari dasar pengembangan
-web.
-</p>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<p>
-Website ini dibuat oleh mahasiswa Teknologi Rekayasa Internet sebagai bagian dari latihan
-pengembangan web.
-</p>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fff1f7, #ffe4f1, #fbcfe8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            color: #6b214d;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(190, 24, 93, 0.12);
+        }
+
+        h1 {
+            font-size: 40px;
+            color: #9d174d;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #be185d;
+            margin-top: 24px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            line-height: 1.9;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .btn-group {
+            margin-top: 28px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 12px 22px;
+            border-radius: 999px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #ec4899;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #be185d;
+            border: 2px solid #f9a8d4;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>About EnhaReport</h1>
+
+        <p>
+            EnhaReport adalah aplikasi pelaporan masalah untuk wilayah <strong>EnhaCity</strong>
+            yang dirancang untuk membantu masyarakat menyampaikan berbagai permasalahan
+            di lingkungan sekitar secara lebih mudah, terstruktur, dan efisien.
+        </p>
+
+        <h2>Tujuan Aplikasi</h2>
+        <p>
+            Aplikasi ini dibuat untuk mempermudah pengguna dalam melaporkan masalah seperti
+            jalan rusak, sampah menumpuk, lampu jalan mati, dan kendala lingkungan lainnya
+            agar dapat diketahui serta ditangani dengan lebih baik.
+        </p>
+
+        <h2>Fitur Utama</h2>
+        <p>
+            EnhaReport menyediakan fitur pelaporan masalah, melihat daftar laporan,
+            melihat detail laporan, memperbarui data laporan, menghapus laporan,
+            dan memantau perkembangan status laporan.
+        </p>
+
+        <div class="btn-group">
+            <a href="{% url 'home' %}" class="btn btn-primary">Kembali ke Home</a>
+            <a href="{% url 'report_list' %}" class="btn btn-secondary">Lihat Laporan</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,57 +1,206 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Daftar Laporan - Enha City</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnhaReport - EnhaCity</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffe4f1, #fbcfe8, #f9a8d4);
+            color: #6b214d;
         }
 
-        .report-card {
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            width: 600px;
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 60px;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(10px);
         }
 
-        .report-card h3 {
-            margin-top: 0;
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #be185d;
         }
 
-        .btn-link {
-            display: inline-block;
-            margin-right: 10px;
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+
+        nav ul li a {
             text-decoration: none;
-            color: blue;
+            color: #831843;
+            font-weight: 500;
         }
 
-        .add-link {
+        .hero {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 70px 20px;
+        }
+
+        .hero-card {
+            max-width: 950px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(190, 24, 93, 0.12);
+        }
+
+        .hero-card h1 {
+            font-size: 48px;
+            margin-bottom: 18px;
+            color: #9d174d;
+        }
+
+        .hero-card p {
+            font-size: 17px;
+            line-height: 1.8;
+            color: #6b214d;
+            margin-bottom: 28px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 14px 26px;
+            border-radius: 999px;
+            font-weight: 600;
+            transition: 0.3s ease;
             display: inline-block;
-            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background: #ec4899;
+            color: white;
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: #db2777;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #be185d;
+            border: 2px solid #f9a8d4;
+        }
+
+        .btn-secondary:hover {
+            background: #fff1f7;
+        }
+
+        .features {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.78);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 10px 24px rgba(190, 24, 93, 0.08);
+        }
+
+        .feature-card h2 {
+            color: #9d174d;
+            margin-bottom: 12px;
+            font-size: 22px;
+        }
+
+        .feature-card p {
+            line-height: 1.7;
+            color: #6b214d;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            color: #831843;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <h1>Daftar Laporan - Enha City</h1>
 
-    <a class="add-link" href="{% url 'add_report' %}">Tambah Laporan</a>
+    <nav>
+        <div class="logo">EnhaReport</div>
+        <ul>
+            <li><a href="{% url 'report_create' %}">Laporkan Masalah</a></li>
+            <li><a href="{% url 'report_list' %}">Lihat Laporan</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+        </ul>
+    </nav>
 
-    {% for report in reports %}
-        <div class="report-card">
-            <h3>{{ report.title }}</h3>
-            <p><strong>Category:</strong> {{ report.category }}</p>
-            <p><strong>Description:</strong> {{ report.description }}</p>
-            <p><strong>Location:</strong> {{ report.location }}</p>
-            <p><strong>Status:</strong> {{ report.status }}</p>
+    <section class="hero">
+        <div class="hero-card">
+            <h1>Selamat Datang di EnhaReport</h1>
+            <p>
+                EnhaReport adalah aplikasi pelaporan masalah kota EnhaCity yang membantu masyarakat
+                menyampaikan berbagai kendala seperti jalan rusak, sampah, lampu jalan mati,
+                dan masalah lingkungan lainnya agar dapat ditangani dengan lebih teratur.
+            </p>
 
-            <a class="btn-link" href="{% url 'update_report' report.id %}">Edit</a>
-            <a class="btn-link" href="{% url 'delete_report' report.id %}">Delete</a>
+            <div class="btn-group">
+                <a href="{% url 'report_create' %}" class="btn btn-primary">Laporkan Masalah</a>
+                <a href="{% url 'report_list' %}" class="btn btn-secondary">Lihat Laporan</a>
+            </div>
         </div>
-    {% empty %}
-        <p>Belum ada laporan.</p>
-    {% endfor %}
+    </section>
+
+    <section class="features">
+        <div class="feature-card">
+            <h2>Mudah Digunakan</h2>
+            <p>
+                Pengguna dapat melaporkan masalah dengan cepat melalui formulir yang telah disediakan.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <h2>Membantu EnhaCity</h2>
+            <p>
+                Aplikasi ini mendukung masyarakat dan pengelola kota untuk menangani
+                permasalahan lingkungan secara lebih terorganisir.
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 EnhaReport - EnhaCity
+    </footer>
+
 </body>
 </html>

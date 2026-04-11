@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.views.generic import TemplateView
 
-def contacts_page(request):
-    return render(request, 'contacts/contacts.html')
+class ContactView(TemplateView):
+    template_name = 'contacts/contacts.html'

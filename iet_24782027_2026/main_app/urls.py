@@ -7,14 +7,18 @@ from .views import (
     ReportUpdateView,
     ReportDeleteView,
     ReportUpdateStatusView,
+    AboutView,
+    ContactView,
 )
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('reports/', ReportListView.as_view(), name='report_list'),
-    path('create/', ReportCreateView.as_view(), name='report_create'),
-    path('<int:pk>/', ReportDetailView.as_view(), name='report_detail'),
-    path('<int:pk>/update/', ReportUpdateView.as_view(), name='report_update'),
-    path('<int:pk>/delete/', ReportDeleteView.as_view(), name='report_delete'),
-    path('<int:pk>/update-status/', ReportUpdateStatusView.as_view(), name='report_update_status'),
+    path('reports/add/', ReportCreateView.as_view(), name='report_create'),
+    path('reports/<int:pk>/', ReportDetailView.as_view(), name='report_detail'),
+    path('reports/<int:pk>/edit/', ReportUpdateView.as_view(), name='report_update'),
+    path('reports/<int:pk>/delete/', ReportDeleteView.as_view(), name='report_delete'),
+    path('reports/<int:pk>/status/', ReportUpdateStatusView.as_view(), name='report_update_status'),
+    path('about/', AboutView.as_view(), name='about'),
+    path('contact/', ContactView.as_view(), name='contact'),
 ]

@@ -1,8 +1,9 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-from django.views import View
-from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.urls import reverse_lazy
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
 from .models import Report
+from .forms import ReportForm
 
 
 class HomeView(TemplateView):
@@ -23,22 +24,34 @@ class ReportDetailView(DetailView):
 
 class ReportCreateView(CreateView):
     model = Report
+    form_class = ReportForm
     template_name = 'main_app/add_report.html'
-    fields = ['title', 'category', 'description', 'location']
     success_url = reverse_lazy('report_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Laporan berhasil ditambahkan.')
+        return super().form_valid(form)
 
 
 class ReportUpdateView(UpdateView):
     model = Report
+    form_class = ReportForm
     template_name = 'main_app/update_report.html'
-    fields = ['title', 'category', 'description', 'location']
     success_url = reverse_lazy('report_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Laporan berhasil diperbarui.')
+        return super().form_valid(form)
 
 
 class ReportDeleteView(DeleteView):
     model = Report
     template_name = 'main_app/delete_report.html'
     success_url = reverse_lazy('report_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Laporan berhasil dihapus.')
+        return super().form_valid(form)
 
 
 class ReportUpdateStatusView(View):
@@ -47,4 +60,11 @@ class ReportUpdateStatusView(View):
         new_status = request.POST.get('status')
         report.status = new_status
         report.save()
+        messages.success(request, 'Status laporan berhasil diubah.')
         return redirect('report_list')
+
+class AboutView(TemplateView):
+    template_name = 'about/about.html'
+
+class ContactView(TemplateView):
+    template_name = 'contacts/contacts.html'

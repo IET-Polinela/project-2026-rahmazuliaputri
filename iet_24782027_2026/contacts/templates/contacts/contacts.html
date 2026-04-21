@@ -1,136 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact - EnhaReport</title>
+{% extends 'base.html' %}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% block title %}Contact - EnhaReport{% endblock %}
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Contact</li>
+    </ol>
+</nav>
 
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #fff1f7, #ffe4f1, #fbcfe8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-            color: #6b214d;
-        }
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-10">
+        <div class="page-card p-4 p-md-5">
+            <h1 class="mb-4 text-center">Contact EnhaReport</h1>
 
-        .card {
-            width: 100%;
-            max-width: 850px;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 28px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(190, 24, 93, 0.12);
-        }
+            <p class="text-center mb-4">
+                Jika kamu memiliki pertanyaan, masukan, atau membutuhkan bantuan terkait
+                penggunaan EnhaReport, silakan hubungi kontak berikut.
+            </p>
 
-        h1 {
-            font-size: 40px;
-            color: #9d174d;
-            margin-bottom: 18px;
-            text-align: center;
-        }
+            <div class="row g-3 mt-2">
+                <div class="col-md-4">
+                    <div class="card p-3 h-100">
+                        <h2 class="h5 mb-2">Email</h2>
+                        <p class="mb-0">enhareport@enhacity.com</p>
+                    </div>
+                </div>
 
-        p {
-            line-height: 1.9;
-            margin-bottom: 12px;
-            font-size: 15px;
-            text-align: center;
-        }
+                <div class="col-md-4">
+                    <div class="card p-3 h-100">
+                        <h2 class="h5 mb-2">Phone</h2>
+                        <p class="mb-0">0812-3456-78907</p>
+                    </div>
+                </div>
 
-        .contact-box {
-            margin-top: 26px;
-            display: grid;
-            gap: 16px;
-        }
-
-        .item {
-            background: #fff7fb;
-            border: 1px solid #f9a8d4;
-            border-radius: 18px;
-            padding: 18px 20px;
-        }
-
-        .item h2 {
-            font-size: 18px;
-            color: #be185d;
-            margin-bottom: 6px;
-        }
-
-        .item p {
-            text-align: left;
-            margin: 0;
-        }
-
-        .btn-group {
-            margin-top: 28px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .btn {
-            text-decoration: none;
-            padding: 12px 22px;
-            border-radius: 999px;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: #ec4899;
-            color: white;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #be185d;
-            border: 2px solid #f9a8d4;
-        }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>Contact EnhaReport</h1>
-        <p>
-            Jika kamu memiliki pertanyaan, masukan, atau membutuhkan bantuan terkait
-            penggunaan EnhaReport, silakan hubungi kontak berikut.
-        </p>
-
-        <div class="contact-box">
-            <div class="item">
-                <h2>Email</h2>
-                <p>enhareport@enhacity.com</p>
+                <div class="col-md-4">
+                    <div class="card p-3 h-100">
+                        <h2 class="h5 mb-2">Address</h2>
+                        <p class="mb-0">EnhaCity Service Center</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="item">
-                <h2>Phone</h2>
-                <p>0812-3456-78907</p>
+            <div class="d-flex gap-3 flex-wrap justify-content-center mt-4">
+                <a href="{% url 'home' %}" class="btn btn-primary">Kembali ke Home</a>
+                <a href="{% url 'report_create' %}" class="btn btn-secondary">Laporkan Masalah</a>
             </div>
-
-            <div class="item">
-                <h2>Address</h2>
-                <p>EnhaCity Service Center</p>
-            </div>
-        </div>
-
-        <div class="btn-group">
-            <a href="{% url 'home' %}" class="btn btn-primary">Kembali ke Home</a>
-            <a href="{% url 'report_create' %}" class="btn btn-secondary">Laporkan Masalah</a>
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

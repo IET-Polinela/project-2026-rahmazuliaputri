@@ -1,37 +1,58 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Laporan - Enha City</title>
-</head>
-<body>
-    <h1>Edit Laporan - Enha City</h1>
+{% extends 'base.html' %}
 
-    <form method="POST">
-        {% csrf_token %}
+{% block title %}Edit Laporan - Enha City{% endblock %}
 
-        <p>
-            <label for="{{ form.title.id_for_label }}">Title:</label>
-            {{ form.title }}
-        </p>
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Laporan</li>
+    </ol>
+</nav>
 
-        <p>
-            <label for="{{ form.category.id_for_label }}">Category:</label>
-            {{ form.category }}
-        </p>
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h3 mb-4">Edit Laporan - Enha City</h1>
 
-        <p>
-            <label for="{{ form.description.id_for_label }}">Description:</label>
-            {{ form.description }}
-        </p>
+                <form method="POST" id="reportForm">
+                    {% csrf_token %}
 
-        <p>
-            <label for="{{ form.location.id_for_label }}">Location:</label>
-            {{ form.location }}
-        </p>
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+                        {{ form.title }}
+                    </div>
 
-        <button type="submit">Update</button>
-    </form>
+                    <div class="mb-3">
+                        <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                        {{ form.category }}
+                    </div>
 
-    <a href="{% url 'report_list' %}">Kembali</a>
-</body>
-</html>
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                        {{ form.description }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+                        {{ form.location }}
+                    </div>
+
+                    <button type="submit" class="btn btn-info" id="submitBtn">Update</button>
+                    <a href="{% url 'report_list' %}" class="btn btn-secondary">Kembali</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('reportForm').addEventListener('submit', function() {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = 'Loading...';
+});
+</script>
+{% endblock %}

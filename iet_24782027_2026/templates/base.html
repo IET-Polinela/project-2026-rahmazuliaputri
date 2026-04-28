@@ -98,30 +98,6 @@
             color: #a72265;
         }
 
-        .btn-info {
-            background: linear-gradient(180deg, #c78bb2 0%, #b56f9c 100%);
-            border-color: #b38bd8;
-            color: #fff;
-        }
-
-        .btn-info:hover {
-            background: linear-gradient(180deg, #bb7ea6 0%, #a95e90 100%);
-            border-color: #a67dcd;
-            color: #fff;
-        }
-
-        .btn-warning {
-            background: linear-gradient(180deg, #f4d264 0%, #ecbb47 100%);
-            border-color: #f4d264;
-            color: #5c4416;
-        }
-
-        .btn-warning:hover {
-            background: linear-gradient(180deg, #ecbb47 0%, #e2ac2f 100%);
-            border-color: #ecbb47;
-            color: #5c4416;
-        }
-
         .btn-danger {
             background: linear-gradient(180deg, #f06d81 0%, #e1556d 100%);
             border-color: #f06d81;
@@ -131,18 +107,6 @@
         .btn-danger:hover {
             background: linear-gradient(180deg, #eb6077 0%, #d94661 100%);
             border-color: #eb6077;
-            color: #fff;
-        }
-
-        .btn-success {
-            background: linear-gradient(180deg, #67c48b 0%, #4db174 100%);
-            border-color: #67c48b;
-            color: #fff;
-        }
-
-        .btn-success:hover {
-            background: linear-gradient(180deg, #59bb80 0%, #3f9f67 100%);
-            border-color: #59bb80;
             color: #fff;
         }
 
@@ -165,30 +129,18 @@
             vertical-align: middle;
         }
 
-        .breadcrumb {
-            background: transparent;
-            padding-left: 0;
-            margin-bottom: 1rem;
-        }
-
-        .breadcrumb-item a {
-            color: #c45c90;
-            text-decoration: none;
-        }
-
-        .breadcrumb-item a:hover {
-            color: #ad1f63;
-            text-decoration: underline;
-        }
-
-        .breadcrumb-item.active {
-            color: #8e5f76;
-        }
-
         .alert-success {
             background: #eaf7ee;
             border: 1px solid #cfe9d8;
             color: #3f7a54;
+            border-radius: 16px;
+        }
+
+        .alert-error,
+        .alert-danger {
+            background: #fdecef;
+            border: 1px solid #f5c2c7;
+            color: #842029;
             border-radius: 16px;
         }
 
@@ -215,6 +167,23 @@
             padding: 0.5em 0.85em;
             font-weight: 600;
         }
+
+        .auth-btn {
+            padding: 0.45rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .logout-form {
+            margin: 0;
+        }
+
+        .welcome-user {
+            color: #973860;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-right: 0.4rem;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -227,7 +196,7 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto gap-lg-2">
+            <ul class="navbar-nav ms-auto gap-lg-2 align-items-lg-center">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'home' %}">Home</a>
                 </li>
@@ -240,6 +209,31 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'contact' %}">Contact</a>
                 </li>
+
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <span class="welcome-user">Hi, {{ user.username }}</span>
+                </li>
+                <li class="nav-item">
+                    <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm auth-btn">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-sm auth-btn">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'register' %}" class="btn btn-secondary btn-sm auth-btn">
+                        <i class="bi bi-person-plus"></i> Register
+                    </a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -248,7 +242,7 @@
 <div class="container mt-4">
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                 {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>

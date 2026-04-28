@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     'main_app',
     'about',
     'contacts',
+    'usermanagement_24782027',
 ]
+
+AUTH_USER_MODEL = 'usermanagement_24782027.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,6 +57,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'iet_24782027_2026.urls'
+
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
 
 TEMPLATES = [
     {

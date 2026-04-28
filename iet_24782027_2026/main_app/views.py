@@ -6,6 +6,14 @@ from .models import Report
 from .forms import ReportForm
 
 
+class AdminRequiredMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated or not request.user.is_admin:
+            messages.error(request, 'Akses ditolak. Hanya admin yang dapat mengakses fitur ini.')
+            return redirect('report_list')
+        return super().dispatch(request, *args, **kwargs)
+
+
 class HomeView(TemplateView):
     template_name = 'main_app/home.html'
 
@@ -22,7 +30,7 @@ class ReportDetailView(DetailView):
     context_object_name = 'report'
 
 
-class ReportCreateView(CreateView):
+class ReportCreateView(AdminRequiredMixin, CreateView):
     model = Report
     form_class = ReportForm
     template_name = 'main_app/add_report.html'
@@ -33,7 +41,7 @@ class ReportCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ReportUpdateView(UpdateView):
+class ReportUpdateView(AdminRequiredMixin, UpdateView):
     model = Report
     form_class = ReportForm
     template_name = 'main_app/update_report.html'
@@ -44,7 +52,7 @@ class ReportUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class ReportDeleteView(DeleteView):
+class ReportDeleteView(AdminRequiredMixin, DeleteView):
     model = Report
     template_name = 'main_app/delete_report.html'
     success_url = reverse_lazy('report_list')
@@ -56,6 +64,10 @@ class ReportDeleteView(DeleteView):
 
 class ReportUpdateStatusView(View):
     def post(self, request, pk):
+        if not request.user.is_authenticated or not request.user.is_admin:
+            messages.error(request, 'Akses ditolak. Hanya admin yang dapat mengakses fitur ini.')
+            return redirect('report_list')
+
         report = get_object_or_404(Report, pk=pk)
         new_status = request.POST.get('status')
         report.status = new_status
@@ -63,8 +75,10 @@ class ReportUpdateStatusView(View):
         messages.success(request, 'Status laporan berhasil diubah.')
         return redirect('report_list')
 
+
 class AboutView(TemplateView):
     template_name = 'about/about.html'
+
 
 class ContactView(TemplateView):
     template_name = 'contacts/contacts.html'

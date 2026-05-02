@@ -2,6 +2,9 @@ from django.views.generic import TemplateView, ListView, DetailView, CreateView,
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
+from django.http import JsonResponse
+from django.db.models import Q
+
 from .models import Report
 from .forms import ReportForm
 
@@ -22,6 +25,7 @@ class ReportListView(ListView):
     model = Report
     template_name = 'main_app/report_list.html'
     context_object_name = 'reports'
+    ordering = ['-created_at']
 
 
 class ReportDetailView(DetailView):
@@ -70,10 +74,63 @@ class ReportUpdateStatusView(View):
 
         report = get_object_or_404(Report, pk=pk)
         new_status = request.POST.get('status')
-        report.status = new_status
-        report.save()
-        messages.success(request, 'Status laporan berhasil diubah.')
+
+        if new_status in ['REPORTED', 'VERIFIED', 'IN_PROGRESS', 'RESOLVED']:
+            report.status = new_status
+            report.save()
+            messages.success(request, 'Status laporan berhasil diubah.')
+        else:
+            messages.error(request, 'Status tidak valid.')
+
         return redirect('report_list')
+
+
+class ReportSearchView(View):
+    def get(self, request, *args, **kwargs):
+        keyword = request.GET.get('q', '')
+
+        reports = Report.objects.all().order_by('-created_at')
+
+        if keyword:
+            reports = reports.filter(
+                Q(title__icontains=keyword) |
+                Q(category__icontains=keyword) |
+                Q(description__icontains=keyword) |
+                Q(location__icontains=keyword) |
+                Q(status__icontains=keyword)
+            )
+
+        data = [
+            {
+                'id': report.id,
+                'title': report.title,
+                'category': report.category,
+                'description': report.description,
+                'location': report.location,
+                'status': report.status,
+                'created_at': report.created_at.strftime('%d-%m-%Y %H:%M')
+            }
+            for report in reports
+        ]
+
+        return JsonResponse({'reports': data})
+
+
+class ReportDetailJsonView(View):
+    def get(self, request, pk, *args, **kwargs):
+        report = get_object_or_404(Report, pk=pk)
+
+        data = {
+            'id': report.id,
+            'title': report.title,
+            'category': report.category,
+            'description': report.description,
+            'location': report.location,
+            'status': report.status,
+            'created_at': report.created_at.strftime('%d-%m-%Y %H:%M')
+        }
+
+        return JsonResponse(data)
 
 
 class AboutView(TemplateView):

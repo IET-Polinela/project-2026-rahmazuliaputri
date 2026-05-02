@@ -10,11 +10,34 @@
     </ol>
 </nav>
 
-<h1 class="mb-4">Daftar Laporan</h1>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h1 class="mb-1">Daftar Laporan</h1>
+        <p class="mb-0">Cari laporan dan lihat detail tanpa reload halaman.</p>
+    </div>
 
-{% if user.is_authenticated and user.is_admin %}
-<a href="{% url 'report_create' %}" class="btn btn-primary mb-3">Tambah Laporan</a>
-{% endif %}
+    {% if user.is_authenticated and user.is_admin %}
+        <a href="{% url 'report_create' %}" class="btn btn-primary">
+            Tambah Laporan
+        </a>
+    {% endif %}
+</div>
+
+<div class="page-card p-4 mb-4">
+    <label for="liveSearchInput" class="form-label fw-semibold">Live Search</label>
+    <input
+        type="text"
+        id="liveSearchInput"
+        class="form-control"
+        placeholder="Cari judul, lokasi, kategori, deskripsi, atau status..."
+    >
+</div>
+
+<div
+    id="reportConfig"
+    data-is-admin="{% if user.is_authenticated and user.is_admin %}true{% else %}false{% endif %}"
+    data-csrf="{{ csrf_token }}"
+></div>
 
 <div class="page-card p-0 overflow-hidden">
     <div class="table-responsive">
@@ -27,7 +50,8 @@
                     <th style="width: 39%;">Aksi</th>
                 </tr>
             </thead>
-            <tbody>
+
+            <tbody id="reportTableBody">
                 {% for report in reports %}
                 <tr>
                     <td>{{ report.title }}</td>
@@ -47,40 +71,51 @@
                     </td>
                     <td>
                         <div class="d-flex flex-wrap gap-2">
-                            <a href="{% url 'report_detail' report.pk %}" class="btn btn-secondary btn-sm">Detail</a>
+                            <button
+                                type="button"
+                                class="btn btn-secondary btn-sm detail-btn"
+                                data-id="{{ report.pk }}"
+                            >
+                                Detail
+                            </button>
 
                             {% if user.is_authenticated and user.is_admin %}
-                                <a href="{% url 'report_update' report.pk %}" class="btn btn-info btn-sm">Edit</a>
+                                <a href="{% url 'report_update' report.pk %}" class="btn btn-info btn-sm">
+                                    Edit
+                                </a>
+
                                 <a href="{% url 'report_delete' report.pk %}" class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Yakin ingin menghapus laporan ini?')">Delete</a>
+                                   onclick="return confirm('Yakin ingin menghapus laporan ini?')">
+                                    Delete
+                                </a>
 
                                 {% if report.status == 'REPORTED' %}
-                                <form method="post" action="{% url 'report_update_status' report.pk %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="status" value="VERIFIED">
-                                    <button type="submit" class="btn btn-primary btn-sm"
-                                            onclick="return confirm('Yakin ingin mengubah status menjadi VERIFIED?')">
-                                        Verifikasi
-                                    </button>
-                                </form>
+                                    <form method="post" action="{% url 'report_update_status' report.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="VERIFIED">
+                                        <button type="submit" class="btn btn-primary btn-sm"
+                                                onclick="return confirm('Yakin ingin mengubah status menjadi VERIFIED?')">
+                                            Verifikasi
+                                        </button>
+                                    </form>
                                 {% elif report.status == 'VERIFIED' %}
-                                <form method="post" action="{% url 'report_update_status' report.pk %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="status" value="IN_PROGRESS">
-                                    <button type="submit" class="btn btn-warning btn-sm"
-                                            onclick="return confirm('Yakin ingin mengubah status menjadi IN_PROGRESS?')">
-                                        Proses
-                                    </button>
-                                </form>
+                                    <form method="post" action="{% url 'report_update_status' report.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="IN_PROGRESS">
+                                        <button type="submit" class="btn btn-warning btn-sm"
+                                                onclick="return confirm('Yakin ingin mengubah status menjadi IN_PROGRESS?')">
+                                            Proses
+                                        </button>
+                                    </form>
                                 {% elif report.status == 'IN_PROGRESS' %}
-                                <form method="post" action="{% url 'report_update_status' report.pk %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="status" value="RESOLVED">
-                                    <button type="submit" class="btn btn-success btn-sm"
-                                            onclick="return confirm('Yakin ingin mengubah status menjadi RESOLVED?')">
-                                        Selesaikan
-                                    </button>
-                                </form>
+                                    <form method="post" action="{% url 'report_update_status' report.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="RESOLVED">
+                                        <button type="submit" class="btn btn-success btn-sm"
+                                                onclick="return confirm('Yakin ingin mengubah status menjadi RESOLVED?')">
+                                            Selesaikan
+                                        </button>
+                                    </form>
                                 {% endif %}
                             {% endif %}
                         </div>
@@ -90,8 +125,11 @@
                 <tr>
                     <td colspan="4" class="text-center py-4">
                         <p class="mb-3">Belum ada laporan</p>
+
                         {% if user.is_authenticated and user.is_admin %}
-                            <a href="{% url 'report_create' %}" class="btn btn-primary">Tambah Laporan</a>
+                            <a href="{% url 'report_create' %}" class="btn btn-primary">
+                                Tambah Laporan
+                            </a>
                         {% endif %}
                     </td>
                 </tr>
@@ -100,4 +138,213 @@
         </table>
     </div>
 </div>
+
+<div class="modal fade" id="reportDetailModal" tabindex="-1" aria-labelledby="reportDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="reportDetailModalLabel">
+                    Detail Laporan
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-3">
+                    <strong>Judul:</strong>
+                    <p id="modalTitle" class="mb-0">-</p>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Kategori:</strong>
+                    <p id="modalCategory" class="mb-0">-</p>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Lokasi:</strong>
+                    <p id="modalLocation" class="mb-0">-</p>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Status:</strong>
+                    <p id="modalStatus" class="mb-0">-</p>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Waktu Dibuat:</strong>
+                    <p id="modalCreatedAt" class="mb-0">-</p>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Deskripsi:</strong>
+                    <p id="modalDescription" class="mb-0">-</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('liveSearchInput');
+        const tableBody = document.getElementById('reportTableBody');
+        const config = document.getElementById('reportConfig');
+
+        const isAdmin = config.getAttribute('data-is-admin') === 'true';
+        const csrfToken = config.getAttribute('data-csrf');
+
+        let debounceTimer = null;
+
+        function getStatusBadge(status) {
+            if (status === 'REPORTED') {
+                return '<span class="badge bg-secondary">Reported</span>';
+            }
+
+            if (status === 'VERIFIED') {
+                return '<span class="badge bg-primary">Verified</span>';
+            }
+
+            if (status === 'IN_PROGRESS') {
+                return '<span class="badge bg-warning text-dark">In Progress</span>';
+            }
+
+            if (status === 'RESOLVED') {
+                return '<span class="badge bg-success">Resolved</span>';
+            }
+
+            return '<span class="badge bg-dark">' + status + '</span>';
+        }
+
+        function getAdminActionButtons(report) {
+            if (!isAdmin) {
+                return '';
+            }
+
+            let statusButton = '';
+
+            if (report.status === 'REPORTED') {
+                statusButton =
+                    '<form method="post" action="/reports/' + report.id + '/status/" class="d-inline">' +
+                        '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">' +
+                        '<input type="hidden" name="status" value="VERIFIED">' +
+                        '<button type="submit" class="btn btn-primary btn-sm" onclick="return confirm(\'Yakin ingin mengubah status menjadi VERIFIED?\')">' +
+                            'Verifikasi' +
+                        '</button>' +
+                    '</form>';
+            } else if (report.status === 'VERIFIED') {
+                statusButton =
+                    '<form method="post" action="/reports/' + report.id + '/status/" class="d-inline">' +
+                        '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">' +
+                        '<input type="hidden" name="status" value="IN_PROGRESS">' +
+                        '<button type="submit" class="btn btn-warning btn-sm" onclick="return confirm(\'Yakin ingin mengubah status menjadi IN_PROGRESS?\')">' +
+                            'Proses' +
+                        '</button>' +
+                    '</form>';
+            } else if (report.status === 'IN_PROGRESS') {
+                statusButton =
+                    '<form method="post" action="/reports/' + report.id + '/status/" class="d-inline">' +
+                        '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">' +
+                        '<input type="hidden" name="status" value="RESOLVED">' +
+                        '<button type="submit" class="btn btn-success btn-sm" onclick="return confirm(\'Yakin ingin mengubah status menjadi RESOLVED?\')">' +
+                            'Selesaikan' +
+                        '</button>' +
+                    '</form>';
+            }
+
+            return '' +
+                '<a href="/reports/' + report.id + '/edit/" class="btn btn-info btn-sm">Edit</a>' +
+                '<a href="/reports/' + report.id + '/delete/" class="btn btn-danger btn-sm" onclick="return confirm(\'Yakin ingin menghapus laporan ini?\')">Delete</a>' +
+                statusButton;
+        }
+
+        function renderReports(reports) {
+            tableBody.innerHTML = '';
+
+            if (reports.length === 0) {
+                tableBody.innerHTML =
+                    '<tr>' +
+                        '<td colspan="4" class="text-center py-4">' +
+                            'Data tidak ditemukan.' +
+                        '</td>' +
+                    '</tr>';
+                return;
+            }
+
+            reports.forEach(function (report) {
+                const row = document.createElement('tr');
+
+                row.innerHTML =
+                    '<td>' + report.title + '</td>' +
+                    '<td>' + report.location + '</td>' +
+                    '<td>' + getStatusBadge(report.status) + '</td>' +
+                    '<td>' +
+                        '<div class="d-flex flex-wrap gap-2">' +
+                            '<button type="button" class="btn btn-secondary btn-sm detail-btn" data-id="' + report.id + '">' +
+                                'Detail' +
+                            '</button>' +
+                            getAdminActionButtons(report) +
+                        '</div>' +
+                    '</td>';
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        function loadReports(keyword) {
+            fetch('/reports/search/?q=' + encodeURIComponent(keyword))
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    console.log('Data live search diterima:', data);
+                    renderReports(data.reports);
+                })
+                .catch(function (error) {
+                    console.error('Gagal mengambil data laporan:', error);
+                });
+        }
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(function () {
+                loadReports(searchInput.value);
+            }, 400);
+        });
+
+        tableBody.addEventListener('click', function (event) {
+            if (event.target.classList.contains('detail-btn')) {
+                const reportId = event.target.getAttribute('data-id');
+
+                fetch('/reports/' + reportId + '/json/')
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (report) {
+                        console.log('Detail laporan diterima:', report);
+
+                        document.getElementById('modalTitle').textContent = report.title;
+                        document.getElementById('modalCategory').textContent = report.category;
+                        document.getElementById('modalLocation').textContent = report.location;
+                        document.getElementById('modalCreatedAt').textContent = report.created_at;
+                        document.getElementById('modalDescription').textContent = report.description;
+                        document.getElementById('modalStatus').innerHTML = getStatusBadge(report.status);
+
+                        const modalElement = document.getElementById('reportDetailModal');
+                        const modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+                    })
+                    .catch(function (error) {
+                        console.error('Gagal mengambil detail laporan:', error);
+                    });
+            }
+        });
+    });
+</script>
 {% endblock %}

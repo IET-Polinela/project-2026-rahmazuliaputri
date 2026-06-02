@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnhaCity Portal</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+
+        .spa-container {
+            min-height: calc(100vh - 80px);
+        }
+
+        .bg-enha-pink {
+            background-color: #d63384 !important;
+        }
+
+        .btn-enha-pink {
+            background-color: #d63384;
+            border-color: #d63384;
+            color: #ffffff;
+        }
+
+        .btn-enha-pink:hover {
+            background-color: #b82b70;
+            border-color: #b82b70;
+            color: #ffffff;
+        }
+
+        .active-enha-pink {
+            background-color: #d63384 !important;
+            border-color: #d63384 !important;
+            color: #ffffff !important;
+        }
+
+        .text-enha-pink {
+            color: #d63384 !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-enha-pink shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold" href="#dashboard">
+                <i class="bi bi-buildings-fill me-2"></i>EnhaCity Portal
+            </a>
+
+            <div id="nav-menu" class="ms-auto"></div>
+        </div>
+    </nav>
+
+    <main class="container-fluid px-4 mt-4 spa-container" id="app-content"></main>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/router.js"></script>
+</body>
+</html>

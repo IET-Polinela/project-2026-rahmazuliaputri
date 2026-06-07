@@ -23,39 +23,59 @@ const routes = {
         <div class="row g-4">
             <aside class="col-12 col-lg-3">
                 <div class="card border-0 p-3 shadow-sm sticky-top" style="top: 20px;">
-                    <button class="btn btn-enha-pink btn-lg w-100 fw-bold mb-3">
-                        <i class="bi bi-plus-circle-fill me-2"></i>Laporan Baru
+                    <button class="btn btn-enha-pink btn-lg w-100 fw-bold mb-3" data-bs-toggle="modal" data-bs-target="#reportModal">
+                        <i class="bi bi-plus-circle-fill me-2"></i>Tambah Laporan Baru
                     </button>
 
                     <div class="list-group">
-                        <a href="#dashboard" class="list-group-item list-group-item-action active-enha-pink">
-                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                        </a>
-                        <a href="#dashboard" class="list-group-item list-group-item-action">
+                        <button type="button" class="list-group-item list-group-item-action active-enha-pink" id="tabMyReports">
                             <i class="bi bi-file-earmark-text me-2"></i>Laporan Saya
-                        </a>
+                        </button>
+                        <button type="button" class="list-group-item list-group-item-action" id="tabFeed">
+                            <i class="bi bi-globe2 me-2"></i>Feed Kota
+                        </button>
                     </div>
                 </div>
             </aside>
 
             <section class="col-12 col-lg-6">
-                <div class="card border-0 p-4 shadow-sm text-center text-muted border-dashed">
-                    <i class="bi bi-inbox fs-1"></i>
-                    <h5 class="mt-3">Selamat Datang</h5>
-                    <p class="small">
-                        Koneksi API untuk data laporan akan diimplementasikan pada Lab 12.
-                    </p>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h4 class="fw-bold mb-0" id="dashboardTitle">Laporan Saya</h4>
+                        <p class="text-muted small mb-0">Daftar laporan ditampilkan dari API secara otomatis.</p>
+                    </div>
                 </div>
+
+                <div id="listContainer"></div>
+                <div id="paginationContainer" class="mt-3"></div>
             </section>
 
             <aside class="col-12 col-lg-3">
                 <div class="card border-0 p-3 shadow-sm sticky-top" style="top: 20px;">
-                    <h6 class="fw-bold">
-                        <i class="bi bi-info-circle-fill text-enha-pink me-2"></i>Pengumuman
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-bar-chart-fill text-enha-pink me-2"></i>Rekap Status
                     </h6>
-                    <p class="small text-muted mb-0">
-                        Gunakan portal ini untuk mengirim dan memantau laporan warga.
-                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="small text-muted">
+                            <i class="bi bi-pencil-square me-1"></i>Draft
+                        </span>
+                        <span class="badge bg-secondary" id="statDraft">0</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="small text-muted">
+                            <i class="bi bi-hourglass-split me-1"></i>Diproses
+                        </span>
+                        <span class="badge bg-warning text-dark" id="statProcess">0</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="small text-muted">
+                            <i class="bi bi-check-circle-fill me-1"></i>Selesai
+                        </span>
+                        <span class="badge bg-success" id="statResolved">0</span>
+                    </div>
                 </div>
             </aside>
         </div>
@@ -89,6 +109,10 @@ function handleRouting() {
 
     if (hash === '#login' && typeof setupLoginForm === 'function') {
         setupLoginForm();
+    }
+
+    if (hash === '#dashboard' && typeof initDashboard === 'function') {
+        initDashboard();
     }
 }
 

@@ -283,7 +283,7 @@ async function editDraft(id) {
         return;
     }
 
-    const response = await fetch(`http://127.0.0.1:8000/api/report/${id}/`, {
+    const response = await fetch(`${API_BASE_URL}/api/report/${id}/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -356,7 +356,7 @@ async function submitReportForm(statusValue) {
         method = 'PUT';
     }
 
-    const response = await fetch(`http://127.0.0.1:8000${endpoint}`, {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: method,
         headers: {
             'Content-Type': 'application/json',

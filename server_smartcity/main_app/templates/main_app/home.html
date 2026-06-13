@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - EnhaReport{% endblock %}
+
+{% block extra_css %}
+<style>
+    .home-section {
+        min-height: 78vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px 0 65px;
+    }
+
+    .home-card {
+        max-width: 610px;
+        width: 100%;
+        text-align: center;
+        padding: 34px 32px;
+    }
+
+    .home-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        background: #fde3ef;
+        color: #d63384;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+    }
+
+    .home-icon svg {
+        width: 31px;
+        height: 31px;
+        display: block;
+    }
+
+    .home-title {
+        font-size: clamp(1.9rem, 4vw, 2.8rem);
+        font-weight: 800;
+        line-height: 1.18;
+        color: #202233;
+        margin-bottom: 14px;
+    }
+
+    .home-title span {
+        color: #d63384;
+    }
+
+    .home-desc {
+        max-width: 490px;
+        margin: 0 auto 20px;
+        color: #667085;
+        font-size: 0.97rem;
+        line-height: 1.8;
+    }
+
+    .short-line {
+        width: 42px;
+        height: 3px;
+        border-radius: 999px;
+        background: #d63384;
+        margin: 0 auto 24px;
+    }
+
+    .home-actions {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 576px) {
+        .home-card {
+            padding: 28px 18px;
+        }
+
+        .home-actions .btn {
+            width: 100%;
+        }
+
+        .home-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="home-section">
+    <div class="page-card home-card">
+        <div class="home-icon">
+            <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 16H16" stroke="#d63384" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M4 16V8L11 4.4V16H4Z" fill="#d63384"/>
+                <path d="M11 16V2.5L15 4.4V16H11Z" fill="#d63384"/>
+                <rect x="5.8" y="9" width="1.25" height="1.25" rx="0.18" fill="#fde3ef"/>
+                <rect x="8.2" y="7.9" width="1.25" height="1.25" rx="0.18" fill="#fde3ef"/>
+                <rect x="5.8" y="12" width="1.25" height="1.25" rx="0.18" fill="#fde3ef"/>
+                <rect x="8.2" y="10.9" width="1.25" height="1.25" rx="0.18" fill="#fde3ef"/>
+                <rect x="12.4" y="5.9" width="1.05" height="1.05" rx="0.16" fill="#fde3ef"/>
+                <rect x="12.4" y="8.5" width="1.05" height="1.05" rx="0.16" fill="#fde3ef"/>
+                <rect x="12.4" y="11.1" width="1.05" height="1.05" rx="0.16" fill="#fde3ef"/>
+            </svg>
+        </div>
+
+        <h1 class="home-title">
+            Selamat Datang di <br>
+            <span>EnhaReport</span>
+        </h1>
+
+        <p class="home-desc">
+            Platform pelaporan masalah kota EnhaCity untuk membantu masyarakat
+            melihat, memantau, dan mengelola laporan secara lebih teratur.
+        </p>
+
+        <div class="short-line"></div>
+
+        <div class="home-actions">
+            <a href="{% url 'report_list' %}" class="btn btn-primary">
+                <i class="bi bi-list-task me-2"></i>
+                Lihat Laporan
+            </a>
+
+            <a href="{% url 'report_create' %}" class="btn btn-secondary">
+                <i class="bi bi-plus-circle me-2"></i>
+                Laporkan Masalah
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

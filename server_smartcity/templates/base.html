@@ -1,0 +1,559 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}EnhaReport{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --pink: #d63384;
+            --pink-dark: #b31d68;
+            --pink-soft: #fff7fb;
+            --pink-border: #f4c8dc;
+            --text-dark: #202233;
+            --text-muted: #6b7280;
+            --card-bg: rgba(255, 255, 255, 0.97);
+        }
+
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text-dark);
+            position: relative;
+            overflow-x: hidden;
+
+            background:
+                radial-gradient(circle at 18% 22%, rgba(214, 51, 132, 0.10), transparent 24%),
+                radial-gradient(circle at 82% 28%, rgba(255, 138, 190, 0.13), transparent 26%),
+                radial-gradient(circle at 50% 88%, rgba(214, 51, 132, 0.10), transparent 32%),
+                linear-gradient(135deg, #fff7fb 0%, #fff1f7 42%, #fffafd 70%, #fdeaf3 100%);
+        }
+
+        .global-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .dot-left-top {
+            position: absolute;
+            top: 178px;
+            left: 96px;
+            width: 105px;
+            height: 72px;
+            opacity: 0.42;
+            background-image: radial-gradient(rgba(214, 51, 132, 0.34) 2px, transparent 2px);
+            background-size: 14px 14px;
+        }
+
+        .dot-right-bottom {
+            position: absolute;
+            right: 105px;
+            bottom: 88px;
+            width: 105px;
+            height: 72px;
+            opacity: 0.38;
+            background-image: radial-gradient(rgba(214, 51, 132, 0.32) 2px, transparent 2px);
+            background-size: 14px 14px;
+        }
+
+        .bottom-wave {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 125px;
+            background: linear-gradient(
+                90deg,
+                rgba(214, 51, 132, 0.10),
+                rgba(255, 180, 215, 0.18)
+            );
+            clip-path: polygon(
+                0 58%,
+                16% 53%,
+                30% 63%,
+                46% 57%,
+                62% 68%,
+                80% 60%,
+                100% 72%,
+                100% 100%,
+                0 100%
+            );
+        }
+
+        .navbar-custom {
+            background-color: #d63384;
+            box-shadow: 0 8px 22px rgba(214, 51, 132, 0.18);
+            position: relative;
+            z-index: 10;
+        }
+
+        .navbar-brand {
+            color: #fff !important;
+            font-weight: 800;
+            font-size: 1.35rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 31px;
+            height: 31px;
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1.5px solid rgba(255, 255, 255, 0.55);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-icon svg {
+            display: block;
+        }
+
+        .navbar-custom .nav-link {
+            color: rgba(255, 255, 255, 0.97) !important;
+            font-weight: 700;
+            margin: 0 8px;
+            font-size: 0.95rem;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: #fff !important;
+            text-decoration: underline;
+            text-underline-offset: 7px;
+        }
+
+        .navbar-user {
+            color: #fff;
+            font-weight: 700;
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+
+        .navbar-divider {
+            color: rgba(255, 255, 255, 0.68);
+            margin-right: 14px;
+        }
+
+        .btn-navbar {
+            background: #ffffff;
+            color: var(--pink) !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 9px 18px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-navbar:hover {
+            background: #ffe6f2;
+            color: var(--pink-dark) !important;
+        }
+
+        main {
+            position: relative;
+            min-height: calc(100vh - 80px);
+        }
+
+        .page-card,
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--pink-border);
+            border-radius: 24px;
+            box-shadow: 0 18px 42px rgba(214, 51, 132, 0.12);
+        }
+
+        .dashboard-panel,
+        .chart-panel,
+        .stat-panel,
+        .soft-section {
+            background: var(--card-bg);
+            border: 1px solid var(--pink-border);
+            border-radius: 24px;
+            box-shadow: 0 18px 42px rgba(214, 51, 132, 0.12);
+        }
+
+        .alert-container {
+            position: relative;
+            z-index: 3;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 18px;
+            padding: 1rem 1.2rem;
+            font-weight: 500;
+            box-shadow: 0 12px 26px rgba(179, 29, 104, 0.10);
+        }
+
+        .alert-success {
+            background: #e7f7ed;
+            color: #26734d;
+        }
+
+        .alert-danger {
+            background: #ffe8ec;
+            color: #b4233c;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #8a6500;
+        }
+
+        .alert-info {
+            background: #e7f3ff;
+            color: #1d5f8f;
+        }
+
+        .btn-primary {
+            background: var(--pink) !important;
+            border: 2px solid var(--pink) !important;
+            color: #fff !important;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 10px 22px;
+            box-shadow: 0 10px 24px rgba(214, 51, 132, 0.18);
+        }
+
+        .btn-primary:hover {
+            background: var(--pink-dark) !important;
+            border-color: var(--pink-dark) !important;
+        }
+
+        .btn-secondary {
+            background: #fff !important;
+            border: 2px solid var(--pink) !important;
+            color: var(--pink) !important;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 10px 22px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--pink) !important;
+            color: #fff !important;
+        }
+
+        .btn-info {
+            background: #0dcaf0 !important;
+            color: #111 !important;
+            border: none !important;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 8px 18px;
+        }
+
+        .btn-danger {
+            background: #dc3545 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 8px 18px;
+        }
+
+        .btn-warning {
+            background: #ffc107 !important;
+            color: #111 !important;
+            border: none !important;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 8px 18px;
+        }
+
+        .btn-success {
+            background: #198754 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 8px 18px;
+        }
+
+        .btn-sm {
+            padding: 7px 15px !important;
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 18px;
+        }
+
+        .breadcrumb a {
+            color: var(--pink);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .breadcrumb-item.active {
+            color: #596070;
+        }
+
+        main h1,
+        main h2,
+        main h3,
+        main h4,
+        main h5,
+        main h6 {
+            color: var(--pink-dark) !important;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+        }
+
+        .home-title {
+            color: var(--text-dark) !important;
+        }
+
+        .home-title span {
+            color: var(--pink) !important;
+        }
+
+        p {
+            color: var(--text-muted);
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .form-control,
+        input,
+        select,
+        textarea {
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-control:focus,
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--pink);
+            box-shadow: 0 0 0 0.18rem rgba(214, 51, 132, 0.14);
+        }
+
+        table,
+        .table {
+            background: #fff;
+            border: 1px solid var(--pink-border);
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .table thead th {
+            background: #343444 !important;
+            color: #fff !important;
+            font-weight: 700;
+            border-color: #434356 !important;
+        }
+
+        .table td,
+        .table th {
+            vertical-align: middle;
+            font-size: 0.95rem;
+        }
+
+        .badge {
+            border-radius: 20px;
+            padding: 7px 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .modal {
+            z-index: 1055 !important;
+        }
+
+        .modal-dialog {
+            pointer-events: auto !important;
+        }
+
+        .modal-content {
+            background: #fff !important;
+            opacity: 1 !important;
+            border-radius: 18px;
+            border: 1px solid var(--pink-border);
+            box-shadow: 0 18px 42px rgba(214, 51, 132, 0.18);
+            pointer-events: auto !important;
+        }
+
+        .modal-header,
+        .modal-body,
+        .modal-footer {
+            background: #fff !important;
+        }
+
+        .modal-title {
+            color: var(--pink-dark) !important;
+            font-weight: 800;
+        }
+
+        .modal-backdrop {
+            z-index: 1050 !important;
+            background-color: #000 !important;
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.26 !important;
+        }
+
+        @media (max-width: 991px) {
+            .navbar-user,
+            .navbar-divider {
+                display: none;
+            }
+
+            .dot-left-top,
+            .dot-right-bottom {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .bottom-wave {
+                height: 95px;
+            }
+        }
+    </style>
+
+    {% block extra_css %}
+    {% endblock %}
+</head>
+<body>
+
+    <div class="global-bg">
+        <div class="dot-left-top"></div>
+        <div class="dot-right-bottom"></div>
+        <div class="bottom-wave"></div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-custom py-3">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <span class="brand-icon">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 16H16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M4 16V8L11 4.4V16H4Z" fill="white"/>
+                        <path d="M11 16V2.5L15 4.4V16H11Z" fill="white"/>
+                        <rect x="5.8" y="9" width="1.25" height="1.25" rx="0.18" fill="#d63384"/>
+                        <rect x="8.2" y="7.9" width="1.25" height="1.25" rx="0.18" fill="#d63384"/>
+                        <rect x="5.8" y="12" width="1.25" height="1.25" rx="0.18" fill="#d63384"/>
+                        <rect x="8.2" y="10.9" width="1.25" height="1.25" rx="0.18" fill="#d63384"/>
+                        <rect x="12.4" y="5.9" width="1.05" height="1.05" rx="0.16" fill="#d63384"/>
+                        <rect x="12.4" y="8.5" width="1.05" height="1.05" rx="0.16" fill="#d63384"/>
+                        <rect x="12.4" y="11.1" width="1.05" height="1.05" rx="0.16" fill="#d63384"/>
+                    </svg>
+                </span>
+                <span>EnhaReport</span>
+            </a>
+
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarMenu">
+                <ul class="navbar-nav ms-auto me-lg-4">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'report_list' %}">Reports</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/">Dashboard</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center mt-3 mt-lg-0">
+                    {% if user.is_authenticated %}
+                        <span class="navbar-user">Hi, {{ user.username }}</span>
+                        <span class="navbar-divider">|</span>
+
+                        <form method="post" action="{% url 'logout' %}" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-navbar">
+                                Logout <i class="bi bi-box-arrow-right"></i>
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn-navbar">
+                            Login <i class="bi bi-box-arrow-in-right"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+        <div class="container alert-container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'success' }} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main class="container py-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('hidden.bs.modal', function () {
+            document.querySelectorAll('.modal-backdrop').forEach(function (backdrop) {
+                backdrop.remove();
+            });
+
+            if (!document.querySelector('.modal.show')) {
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('overflow');
+                document.body.style.removeProperty('padding-right');
+            }
+        });
+    </script>
+
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>

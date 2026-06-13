@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block title %}Tambah Laporan - EnhaReport{% endblock %}
+
+{% block extra_css %}
+<style>
+    .report-form-section {
+        padding-bottom: 2rem;
+    }
+
+    .report-form-card {
+        background: rgba(255, 255, 255, 0.97);
+        border: 1.8px solid #efabc9;
+        border-radius: 28px;
+        box-shadow: 0 18px 42px rgba(179, 29, 104, 0.13);
+        overflow: hidden;
+    }
+
+    .report-form-header {
+        padding: 1.5rem 1.7rem;
+        border-bottom: 1.5px solid #efd2de;
+        background: linear-gradient(135deg, rgba(214, 51, 132, 0.08), rgba(255, 255, 255, 0.92));
+    }
+
+    .report-form-title {
+        color: #b31d68;
+        font-weight: 800;
+        margin-bottom: 0.35rem;
+        letter-spacing: -0.4px;
+    }
+
+    .report-form-subtitle {
+        color: #8b3b63;
+        margin-bottom: 0;
+        font-size: 0.95rem;
+    }
+
+    .report-form-body {
+        padding: 1.7rem;
+    }
+
+    .form-group-custom {
+        margin-bottom: 1.15rem;
+    }
+
+    .form-group-custom label {
+        color: #202233;
+        font-weight: 700;
+        margin-bottom: 0.45rem;
+    }
+
+    .form-group-custom input,
+    .form-group-custom select,
+    .form-group-custom textarea {
+        width: 100%;
+        border: 1.5px solid #f0b7d2;
+        border-radius: 14px;
+        padding: 0.72rem 0.9rem;
+        background: #fff;
+        color: #202233;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .form-group-custom textarea {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .form-group-custom input:focus,
+    .form-group-custom select:focus,
+    .form-group-custom textarea:focus {
+        border-color: #d63384;
+        box-shadow: 0 0 0 0.2rem rgba(214, 51, 132, 0.13);
+    }
+
+    .form-help-text {
+        color: #8b3b63;
+        font-size: 0.82rem;
+        margin-top: 0.35rem;
+    }
+
+    .form-error {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 0.35rem;
+        font-weight: 600;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+        margin-top: 1.4rem;
+    }
+
+    @media (max-width: 576px) {
+        .report-form-header,
+        .report-form-body {
+            padding: 1.2rem;
+        }
+
+        .form-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="report-form-section">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'report_list' %}">Reports</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Tambah Laporan
+            </li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-9 col-lg-7">
+            <div class="report-form-card">
+                <div class="report-form-header">
+                    <h1 class="h3 report-form-title">
+                        <i class="bi bi-plus-circle-fill me-2"></i>
+                        Tambah Laporan
+                    </h1>
+                    <p class="report-form-subtitle">
+                        Isi data laporan dengan jelas agar laporan mudah diproses.
+                    </p>
+                </div>
+
+                <div class="report-form-body">
+                    <form method="POST" id="reportForm" novalidate>
+                        {% csrf_token %}
+
+                        <div class="form-group-custom">
+                            <label for="{{ form.title.id_for_label }}">Judul Laporan</label>
+                            {{ form.title }}
+
+                            {% if form.title.help_text %}
+                                <div class="form-help-text">{{ form.title.help_text }}</div>
+                            {% endif %}
+
+                            {% for error in form.title.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label for="{{ form.category.id_for_label }}">Kategori</label>
+                            {{ form.category }}
+
+                            {% if form.category.help_text %}
+                                <div class="form-help-text">{{ form.category.help_text }}</div>
+                            {% endif %}
+
+                            {% for error in form.category.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label for="{{ form.description.id_for_label }}">Deskripsi</label>
+                            {{ form.description }}
+
+                            {% if form.description.help_text %}
+                                <div class="form-help-text">{{ form.description.help_text }}</div>
+                            {% endif %}
+
+                            {% for error in form.description.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label for="{{ form.location.id_for_label }}">Lokasi</label>
+                            {{ form.location }}
+
+                            {% if form.location.help_text %}
+                                <div class="form-help-text">{{ form.location.help_text }}</div>
+                            {% endif %}
+
+                            {% for error in form.location.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger mt-3">
+                                {% for error in form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="bi bi-send-fill me-2"></i>
+                                Submit
+                            </button>
+
+                            <a href="{% url 'report_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left-circle me-2"></i>
+                                Kembali
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.getElementById('reportForm').addEventListener('submit', function() {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading...';
+});
+</script>
+{% endblock %}

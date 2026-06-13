@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - EnhaReport{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-wrapper {
+        min-height: 72vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 480px;
+        background: rgba(255, 255, 255, 0.97);
+        border: 1.8px solid #efabc9;
+        border-radius: 30px;
+        box-shadow: 0 18px 42px rgba(179, 29, 104, 0.13);
+        overflow: hidden;
+    }
+
+    .auth-header {
+        text-align: center;
+        padding: 2rem 2rem 1rem;
+        background: linear-gradient(135deg, rgba(214, 51, 132, 0.08), rgba(255, 255, 255, 0.95));
+        border-bottom: 1.5px solid #efd2de;
+    }
+
+    .auth-brand-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        background: #fde3ef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+    }
+
+    .auth-brand-icon svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .auth-brand {
+        color: #b31d68;
+        font-weight: 800;
+        font-size: 1.15rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .auth-title {
+        color: #b31d68;
+        font-weight: 800;
+        margin: 0;
+        font-size: 2.1rem;
+        letter-spacing: -0.5px;
+    }
+
+    .auth-subtitle {
+        color: #8b3b63;
+        margin-top: 0.55rem;
+        margin-bottom: 0;
+        font-size: 0.95rem;
+    }
+
+    .auth-body {
+        padding: 1.6rem 2rem 2rem;
+    }
+
+    .auth-body label {
+        font-weight: 700;
+        color: #202233;
+        margin-bottom: 0.45rem;
+    }
+
+    .auth-body .form-control {
+        border: 1.5px solid #f0b7d2;
+        border-radius: 14px;
+        padding: 0.72rem 0.9rem;
+        background: #fff;
+    }
+
+    .auth-body .form-control:focus {
+        border-color: #d63384;
+        box-shadow: 0 0 0 0.2rem rgba(214, 51, 132, 0.13);
+    }
+
+    .input-group .form-control {
+        border-right: 0;
+    }
+
+    .input-group-text {
+        border-radius: 0 14px 14px 0;
+        border: 1.5px solid #f0b7d2;
+        border-left: 0;
+        background: #fff;
+        color: #b31d68;
+        cursor: pointer;
+    }
+
+    .btn-auth {
+        border-radius: 14px;
+        font-weight: 800;
+        padding: 0.78rem 1.2rem;
+        border: 2px solid #d63384;
+        background: #d63384;
+        color: #fff;
+        box-shadow: 0 10px 24px rgba(214, 51, 132, 0.20);
+        transition: 0.2s ease;
+    }
+
+    .btn-auth:hover {
+        background: #b31d68;
+        border-color: #b31d68;
+        color: #fff;
+    }
+
+    .auth-link {
+        color: #b31d68;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .auth-link:hover {
+        color: #8f1650;
+        text-decoration: underline;
+    }
+
+    @media (max-width: 576px) {
+        .auth-body,
+        .auth-header {
+            padding-left: 1.3rem;
+            padding-right: 1.3rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-brand-icon">
+                <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 16H16" stroke="#d63384" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M4 16V8L11 4.4V16H4Z" fill="#d63384"/>
+                    <path d="M11 16V2.5L15 4.4V16H11Z" fill="#d63384"/>
+                    <rect x="5.8" y="9" width="1.25" height="1.25" rx="0.18" fill="#fde3ef"/>
+                    <rect x="8.2" y="7.9" width="1.25" height="1.25" rx="0.18" fill="#fde3ef"/>
+                    <rect x="5.8" y="12" width="1.25" height="1.25" rx="0.18" fill="#fde3ef"/>
+                    <rect x="8.2" y="10.9" width="1.25" height="1.25" rx="0.18" fill="#fde3ef"/>
+                    <rect x="12.4" y="5.9" width="1.05" height="1.05" rx="0.16" fill="#fde3ef"/>
+                    <rect x="12.4" y="8.5" width="1.05" height="1.05" rx="0.16" fill="#fde3ef"/>
+                    <rect x="12.4" y="11.1" width="1.05" height="1.05" rx="0.16" fill="#fde3ef"/>
+                </svg>
+            </div>
+            <div class="auth-brand">EnhaReport</div>
+            <h1 class="auth-title">Login</h1>
+            <p class="auth-subtitle">Masuk ke akunmu untuk melanjutkan</p>
+        </div>
+
+        <div class="auth-body">
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    Username atau password salah.
+                </div>
+            {% endif %}
+
+            <form method="post" id="loginForm">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" id="id_username" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="id_password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <input type="password" name="password" class="form-control" id="id_password" required>
+                        <span class="input-group-text" onclick="togglePassword()">
+                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-auth w-100" id="loginBtn">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                    Login
+                </button>
+            </form>
+
+            <p class="text-center mt-4 mb-0">
+                Belum punya akun?
+                <a href="{% url 'register' %}" class="auth-link">Register di sini</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword() {
+    const passwordInput = document.getElementById('id_password');
+    const toggleIcon = document.getElementById('toggleIcon');
+
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('bi-eye');
+        toggleIcon.classList.add('bi-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('bi-eye-slash');
+        toggleIcon.classList.add('bi-eye');
+    }
+}
+
+document.getElementById('loginForm').addEventListener('submit', function () {
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+});
+</script>
+{% endblock %}

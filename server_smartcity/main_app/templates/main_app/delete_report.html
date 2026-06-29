@@ -1,31 +1,132 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Hapus Laporan - Enha City{% endblock %}
+{% block title %}Hapus Laporan - EnhaReport{% endblock %}
+
+{% block extra_css %}
+<style>
+    .breadcrumb {
+        margin-bottom: 1rem;
+    }
+
+    .breadcrumb a {
+        color: #d63384;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .breadcrumb .active {
+        color: #6c6f80;
+        font-weight: 600;
+    }
+
+    .delete-card {
+        max-width: 680px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.98);
+        border: 1.6px solid #dc3545;
+        border-radius: 24px;
+        box-shadow: 0 18px 42px rgba(220, 53, 69, 0.12);
+        overflow: hidden;
+    }
+
+    .delete-card-header {
+        padding: 1.3rem 1.5rem;
+        border-bottom: 1px solid #f4c2d0;
+        background: #fff5f7;
+    }
+
+    .delete-title {
+        color: #dc3545;
+        font-weight: 800;
+        margin-bottom: 0.35rem;
+    }
+
+    .delete-subtitle {
+        color: #6c6f80;
+        margin-bottom: 0;
+    }
+
+    .delete-card-body {
+        padding: 1.5rem;
+    }
+
+    .delete-report-box {
+        background: #fff5fa;
+        border: 1px solid #f4c2d9;
+        border-radius: 16px;
+        padding: 1rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .delete-report-title {
+        font-weight: 800;
+        color: #202233;
+        margin-bottom: 0.35rem;
+        word-break: break-word;
+    }
+
+    .delete-report-meta {
+        color: #6c6f80;
+        margin-bottom: 0;
+    }
+
+    .delete-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Hapus Laporan</li>
-    </ol>
-</nav>
+<div class="container-fluid">
 
-<div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-6">
-        <div class="card shadow-sm border-danger">
-            <div class="card-body">
-                <h1 class="h3 mb-3 text-danger">Hapus Laporan - Enha City</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'report_list' %}">Reports</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Hapus Laporan
+            </li>
+        </ol>
+    </nav>
 
-                <p>Apakah kamu yakin ingin menghapus laporan: <strong>{{ object.title }}</strong>?</p>
+    <div class="delete-card">
+        <div class="delete-card-header">
+            <h2 class="delete-title">Hapus Laporan</h2>
+            <p class="delete-subtitle">Pastikan data yang dihapus sudah benar.</p>
+        </div>
 
-                <form method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Ya, Hapus</button>
-                    <a href="{% url 'report_list' %}" class="btn btn-secondary">Batal</a>
-                </form>
+        <div class="delete-card-body">
+            <div class="delete-report-box">
+                <h5 class="delete-report-title">{{ report.title }}</h5>
+                <p class="delete-report-meta">
+                    {{ report.category }} • {{ report.location }} • {{ report.status }}
+                </p>
             </div>
+
+            <p class="mb-4">
+                Apakah kamu yakin ingin menghapus laporan ini? Data yang sudah dihapus tidak akan tampil lagi pada daftar laporan.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="delete-actions">
+                    <button type="submit" class="btn btn-danger fw-bold px-4">
+                        Ya, Hapus
+                    </button>
+
+                    <a href="{% url 'report_list' %}" class="btn btn-outline-primary fw-bold px-4">
+                        Batal
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
+
 </div>
 {% endblock %}

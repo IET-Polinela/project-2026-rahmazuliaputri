@@ -23,7 +23,7 @@ const routes = {
         <div class="row g-4">
             <aside class="col-12 col-lg-3">
                 <div class="card border-0 p-3 shadow-sm sticky-top" style="top: 20px;">
-                    <button class="btn btn-enha-pink btn-lg w-100 fw-bold mb-3" data-bs-toggle="modal" data-bs-target="#reportModal">
+                    <button id="btnBukaModal" class="btn btn-enha-pink btn-lg w-100 fw-bold mb-3" data-bs-toggle="modal" data-bs-target="#reportModal">
                         <i class="bi bi-plus-circle-fill me-2"></i>Tambah Laporan Baru
                     </button>
 
@@ -31,7 +31,7 @@ const routes = {
                         <button type="button" class="list-group-item list-group-item-action active-enha-pink" id="tabMyReports">
                             <i class="bi bi-file-earmark-text me-2"></i>Laporan Saya
                         </button>
-                        <button type="button" class="list-group-item list-group-item-action" id="tabFeed">
+                        <button type="button" class="list-group-item list-group-item-action" id="tabFeedKota">
                             <i class="bi bi-globe2 me-2"></i>Feed Kota
                         </button>
                     </div>
@@ -51,7 +51,7 @@ const routes = {
             </section>
 
             <aside class="col-12 col-lg-3">
-                <div class="card border-0 p-3 shadow-sm sticky-top" style="top: 20px;">
+                <div class="card border-0 p-3 shadow-sm sticky-top" id="summaryStats" style="top: 20px;">
                     <h6 class="fw-bold mb-3">
                         <i class="bi bi-bar-chart-fill text-enha-pink me-2"></i>Rekap Status
                     </h6>
@@ -83,7 +83,11 @@ const routes = {
 };
 
 function updateNavbar(hash) {
-    const navMenu = document.getElementById('nav-menu');
+    const navMenu = document.getElementById('nav-menus');
+
+    if (!navMenu) {
+        return;
+    }
 
     if (hash === '#dashboard') {
         navMenu.innerHTML = `
@@ -103,6 +107,17 @@ function updateNavbar(hash) {
 function handleRouting() {
     const hash = window.location.hash || '#login';
     const appContent = document.getElementById('app-content');
+
+    if (!appContent) {
+        return;
+    }
+
+    const accessToken = localStorage.getItem('access_token');
+
+    if (hash === '#dashboard' && !accessToken) {
+        window.location.hash = '#login';
+        return;
+    }
 
     appContent.innerHTML = routes[hash] || routes['#login'];
     updateNavbar(hash);

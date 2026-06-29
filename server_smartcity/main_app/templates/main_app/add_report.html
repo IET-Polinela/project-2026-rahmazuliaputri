@@ -129,7 +129,7 @@
                 <div class="report-form-header">
                     <h1 class="h3 report-form-title">
                         <i class="bi bi-plus-circle-fill me-2"></i>
-                        Tambah Laporan
+                        Tambah Laporan - Enha City
                     </h1>
                     <p class="report-form-subtitle">
                         Isi data laporan dengan jelas agar laporan mudah diproses.
@@ -192,6 +192,21 @@
                             {% endfor %}
                         </div>
 
+                        {% if form.status %}
+                            <div class="form-group-custom">
+                                <label for="{{ form.status.id_for_label }}">Status</label>
+                                {{ form.status }}
+
+                                {% if form.status.help_text %}
+                                    <div class="form-help-text">{{ form.status.help_text }}</div>
+                                {% endif %}
+
+                                {% for error in form.status.errors %}
+                                    <div class="form-error">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
                         {% if form.non_field_errors %}
                             <div class="alert alert-danger mt-3">
                                 {% for error in form.non_field_errors %}
@@ -201,12 +216,12 @@
                         {% endif %}
 
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <button type="submit" class="btn btn-primary fw-bold" id="submitBtn">
                                 <i class="bi bi-send-fill me-2"></i>
                                 Submit
                             </button>
 
-                            <a href="{% url 'report_list' %}" class="btn btn-secondary">
+                            <a href="{% url 'report_list' %}" class="btn btn-secondary fw-bold">
                                 <i class="bi bi-arrow-left-circle me-2"></i>
                                 Kembali
                             </a>

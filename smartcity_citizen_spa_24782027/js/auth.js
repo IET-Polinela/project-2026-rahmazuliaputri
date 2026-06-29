@@ -21,6 +21,7 @@ function setupLoginForm() {
         if (result.status === 200) {
             localStorage.setItem('access_token', result.data.access);
             localStorage.setItem('refresh_token', result.data.refresh);
+            localStorage.setItem('username', username);
 
             alert('Login berhasil');
             window.location.hash = '#dashboard';
@@ -33,6 +34,7 @@ function setupLoginForm() {
 function logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('username');
 
     alert('Logout berhasil');
     window.location.hash = '#login';

@@ -1,348 +1,760 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Daftar Laporan - Enha City{% endblock %}
+{% block title %}Daftar Laporan - EnhaReport{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-heading-title {
+        font-size: clamp(1.65rem, 2.4vw, 2.15rem);
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.3px;
+        color: #b31d68;
+        margin-bottom: 0.25rem;
+    }
+
+    .page-heading-subtitle {
+        color: #8b3b63;
+        font-size: 0.95rem;
+        margin-bottom: 0;
+    }
+
+    .breadcrumb {
+        margin-bottom: 1rem;
+    }
+
+    .breadcrumb a {
+        color: #d63384;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .breadcrumb .active {
+        color: #6c6f80;
+        font-weight: 600;
+    }
+
+    .report-table-card {
+        background: rgba(255, 255, 255, 0.97);
+        border: 1.6px solid #f2c2d8;
+        border-radius: 24px;
+        box-shadow: 0 18px 42px rgba(179, 29, 104, 0.12);
+        overflow: hidden;
+    }
+
+    .report-table-card .card-header {
+        border-bottom: 1px solid #efd2de;
+        padding: 0.9rem;
+    }
+
+    .report-table {
+        width: 100%;
+        margin-bottom: 0;
+        table-layout: fixed;
+    }
+
+    .report-table thead th {
+        background: #2f2f42;
+        color: white;
+        font-weight: 800;
+        border: none;
+        vertical-align: middle;
+        white-space: nowrap;
+        padding: 0.72rem 0.55rem;
+        font-size: 0.88rem;
+    }
+
+    .report-table tbody td {
+        vertical-align: middle;
+        border-color: #f5cddd;
+        padding: 0.7rem 0.55rem;
+        font-size: 0.88rem;
+    }
+
+    .col-title {
+        width: 24%;
+    }
+
+    .col-category {
+        width: 13%;
+    }
+
+    .col-location {
+        width: 14%;
+    }
+
+    .col-status {
+        width: 10%;
+    }
+
+    .col-date {
+        width: 13%;
+    }
+
+    .col-action {
+        width: 26%;
+    }
+
+    .cell-title,
+    .cell-category,
+    .cell-location {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .cell-date {
+        white-space: normal;
+        line-height: 1.25;
+    }
+
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 50px 45px 54px 86px;
+        justify-content: end;
+        align-items: center;
+        gap: 0.32rem;
+        white-space: nowrap;
+    }
+
+    .status-form {
+        display: block;
+        margin: 0;
+        width: 86px;
+    }
+
+    .btn-action {
+        border: none;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 0.66rem;
+        padding: 0.38rem 0.25rem;
+        line-height: 1.1;
+        text-align: center;
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        min-height: 30px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .btn-action:hover {
+        filter: brightness(0.96);
+        text-decoration: none;
+    }
+
+    .btn-detail-action {
+        background: #6f42c1;
+        color: #ffffff;
+    }
+
+    .btn-edit-action {
+        background: #e83e8c;
+        color: #ffffff;
+    }
+
+    .btn-delete-action {
+        background: #dc3545;
+        color: #ffffff;
+    }
+
+    .btn-status-reported {
+        background: #0dcaf0;
+        color: #ffffff;
+    }
+
+    .btn-status-verified {
+        background: #0d6efd;
+        color: #ffffff;
+    }
+
+    .btn-status-progress {
+        background: #ffc107;
+        color: #202233;
+    }
+
+    .btn-status-resolved {
+        background: #198754;
+        color: #ffffff;
+    }
+
+    .btn-detail-action:hover,
+    .btn-edit-action:hover,
+    .btn-delete-action:hover,
+    .btn-status-reported:hover,
+    .btn-status-verified:hover,
+    .btn-status-resolved:hover {
+        color: #ffffff;
+    }
+
+    .btn-status-progress:hover {
+        color: #202233;
+    }
+
+    .badge {
+        font-weight: 800;
+        font-size: 0.68rem;
+        padding: 0.42rem 0.55rem;
+        border-radius: 999px;
+        white-space: nowrap;
+    }
+
+    .detail-modal-card {
+        border: none;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 22px 55px rgba(60, 20, 44, 0.28);
+    }
+
+    .detail-modal-header {
+        background: linear-gradient(135deg, #d63384, #b31d68);
+        color: white;
+        border-bottom: none;
+        padding: 1.15rem 1.35rem;
+    }
+
+    .detail-modal-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .detail-modal-body {
+        padding: 1.4rem;
+        background: #ffffff;
+    }
+
+    .detail-report-title {
+        color: #b31d68;
+        font-weight: 800;
+        font-size: 1.35rem;
+        line-height: 1.25;
+        margin-bottom: 0.35rem;
+        word-break: break-word;
+    }
+
+    .detail-date {
+        color: #6c6f80;
+        font-size: 0.9rem;
+        margin-bottom: 0;
+    }
+
+    .detail-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .detail-box {
+        background: #fff7fb;
+        border: 1px solid #f4c2d9;
+        border-radius: 16px;
+        padding: 0.9rem 1rem;
+    }
+
+    .detail-info-label {
+        font-size: 0.72rem;
+        color: #b31d68;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.45px;
+        margin-bottom: 0.35rem;
+    }
+
+    .detail-info-value {
+        color: #202233;
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin: 0;
+        word-break: break-word;
+    }
+
+    .detail-description-box {
+        background: #fff7fb;
+        border: 1px solid #f4c2d9;
+        border-radius: 16px;
+        padding: 1rem;
+        color: #202233;
+        min-height: 100px;
+        word-break: break-word;
+        line-height: 1.55;
+    }
+
+    .modal-footer {
+        background: #fff7fb;
+        border-top: 1px solid #f4c2d9;
+    }
+
+    @media (max-width: 1200px) {
+        .report-table {
+            min-width: 1080px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .detail-top {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Reports</li>
-    </ol>
-</nav>
+<div class="container-fluid">
 
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-    <div>
-        <h1 class="mb-1">Daftar Laporan</h1>
-        <p class="mb-0">Cari laporan dan lihat detail tanpa reload halaman.</p>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Reports
+            </li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h1 class="page-heading-title">Daftar Laporan</h1>
+            <p class="page-heading-subtitle">Kelola dan pantau laporan warga.</p>
+        </div>
+
+        {% if user.is_authenticated and user.is_admin %}
+            <a href="{% url 'report_create' %}" class="btn btn-primary fw-bold px-4 py-2">
+                Tambah Laporan
+            </a>
+        {% endif %}
     </div>
 
-    {% if user.is_authenticated and user.is_admin %}
-        <a href="{% url 'report_create' %}" class="btn btn-primary">
-            Tambah Laporan
-        </a>
-    {% endif %}
-</div>
+    <div class="card report-table-card">
+        <div class="card-header bg-white">
+            <div class="row g-2 align-items-center">
+                <div class="col-12 col-md-6">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Cari laporan...">
+                </div>
+            </div>
+        </div>
 
-<div class="page-card p-4 mb-4">
-    <label for="liveSearchInput" class="form-label fw-semibold">Live Search</label>
-    <input
-        type="text"
-        id="liveSearchInput"
-        class="form-control"
-        placeholder="Cari judul, lokasi, kategori, deskripsi, atau status..."
-    >
-</div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle report-table">
+                    <thead>
+                        <tr>
+                            <th class="col-title">Judul</th>
+                            <th class="col-category">Kategori</th>
+                            <th class="col-location">Lokasi</th>
+                            <th class="col-status">Status</th>
+                            <th class="col-date">Tanggal</th>
+                            <th class="col-action text-end">Aksi</th>
+                        </tr>
+                    </thead>
 
-<div
-    id="reportConfig"
-    data-is-admin="{% if user.is_authenticated and user.is_admin %}true{% else %}false{% endif %}"
-    data-csrf="{{ csrf_token }}"
-></div>
+                    <tbody id="reportTableBody">
+                        {% for report in reports %}
+                            <tr>
+                                <td class="fw-semibold cell-title">{{ report.title }}</td>
+                                <td class="cell-category">{{ report.category }}</td>
+                                <td class="cell-location">{{ report.location }}</td>
+                                <td>
+                                    {% if report.status == "DRAFT" %}
+                                        <span class="badge bg-secondary">DRAFT</span>
+                                    {% elif report.status == "REPORTED" %}
+                                        <span class="badge bg-info">REPORTED</span>
+                                    {% elif report.status == "VERIFIED" %}
+                                        <span class="badge bg-primary">VERIFIED</span>
+                                    {% elif report.status == "IN_PROGRESS" %}
+                                        <span class="badge bg-warning text-dark">IN_PROGRESS</span>
+                                    {% elif report.status == "RESOLVED" %}
+                                        <span class="badge bg-success">RESOLVED</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ report.status }}</span>
+                                    {% endif %}
+                                </td>
 
-<div class="page-card p-0 overflow-hidden">
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle mb-0">
-            <thead class="table-primary">
-                <tr>
-                    <th style="width: 28%;">Judul</th>
-                    <th style="width: 18%;">Lokasi</th>
-                    <th style="width: 15%;">Status</th>
-                    <th style="width: 39%;">Aksi</th>
-                </tr>
-            </thead>
+                                <td class="cell-date">{{ report.created_at|date:"d-m-Y H:i" }}</td>
 
-            <tbody id="reportTableBody">
-                {% for report in reports %}
-                <tr>
-                    <td>{{ report.title }}</td>
-                    <td>{{ report.location }}</td>
-                    <td>
-                        {% if report.status == 'REPORTED' %}
-                            <span class="badge bg-secondary">Reported</span>
-                        {% elif report.status == 'VERIFIED' %}
-                            <span class="badge bg-primary">Verified</span>
-                        {% elif report.status == 'IN_PROGRESS' %}
-                            <span class="badge bg-warning text-dark">In Progress</span>
-                        {% elif report.status == 'RESOLVED' %}
-                            <span class="badge bg-success">Resolved</span>
-                        {% else %}
-                            <span class="badge bg-dark">{{ report.status }}</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <div class="d-flex flex-wrap gap-2">
-                            <button
-                                type="button"
-                                class="btn btn-secondary btn-sm detail-btn"
-                                data-id="{{ report.pk }}"
-                            >
-                                Detail
-                            </button>
-
-                            {% if user.is_authenticated and user.is_admin %}
-                                <a href="{% url 'report_update' report.pk %}" class="btn btn-info btn-sm">
-                                    Edit
-                                </a>
-
-                                <a href="{% url 'report_delete' report.pk %}" class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Yakin ingin menghapus laporan ini?')">
-                                    Delete
-                                </a>
-
-                                {% if report.status == 'REPORTED' %}
-                                    <form method="post" action="{% url 'report_update_status' report.pk %}" class="d-inline">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="status" value="VERIFIED">
-                                        <button type="submit" class="btn btn-primary btn-sm"
-                                                onclick="return confirm('Yakin ingin mengubah status menjadi VERIFIED?')">
-                                            Verifikasi
+                                <td class="text-end">
+                                    <div class="action-buttons">
+                                        <button type="button" class="btn-action btn-detail-action btn-open-detail" data-report-id="{{ report.pk }}">
+                                            Detail
                                         </button>
-                                    </form>
-                                {% elif report.status == 'VERIFIED' %}
-                                    <form method="post" action="{% url 'report_update_status' report.pk %}" class="d-inline">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="status" value="IN_PROGRESS">
-                                        <button type="submit" class="btn btn-warning btn-sm"
-                                                onclick="return confirm('Yakin ingin mengubah status menjadi IN_PROGRESS?')">
-                                            Proses
-                                        </button>
-                                    </form>
-                                {% elif report.status == 'IN_PROGRESS' %}
-                                    <form method="post" action="{% url 'report_update_status' report.pk %}" class="d-inline">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="status" value="RESOLVED">
-                                        <button type="submit" class="btn btn-success btn-sm"
-                                                onclick="return confirm('Yakin ingin mengubah status menjadi RESOLVED?')">
-                                            Selesaikan
-                                        </button>
-                                    </form>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4" class="text-center py-4">
-                        <p class="mb-3">Belum ada laporan</p>
 
-                        {% if user.is_authenticated and user.is_admin %}
-                            <a href="{% url 'report_create' %}" class="btn btn-primary">
-                                Tambah Laporan
-                            </a>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                                        {% if user.is_authenticated and user.is_admin %}
+                                            <a href="{% url 'report_update' report.pk %}" class="btn-action btn-edit-action">
+                                                Edit
+                                            </a>
+
+                                            <a href="{% url 'report_delete' report.pk %}" class="btn-action btn-delete-action btn-delete-confirm">
+                                                Hapus
+                                            </a>
+
+                                            {% if report.status == "DRAFT" %}
+                                                <form method="post" action="{% url 'update_status' report.pk %}" class="status-form status-confirm-form" data-next-status="REPORTED">
+                                                    {% csrf_token %}
+                                                    <button type="submit" name="new_status" value="REPORTED" class="btn-action btn-status-reported">
+                                                        REPORTED
+                                                    </button>
+                                                </form>
+                                            {% elif report.status == "REPORTED" %}
+                                                <form method="post" action="{% url 'update_status' report.pk %}" class="status-form status-confirm-form" data-next-status="VERIFIED">
+                                                    {% csrf_token %}
+                                                    <button type="submit" name="new_status" value="VERIFIED" class="btn-action btn-status-verified">
+                                                        VERIFIED
+                                                    </button>
+                                                </form>
+                                            {% elif report.status == "VERIFIED" %}
+                                                <form method="post" action="{% url 'update_status' report.pk %}" class="status-form status-confirm-form" data-next-status="IN_PROGRESS">
+                                                    {% csrf_token %}
+                                                    <button type="submit" name="new_status" value="IN_PROGRESS" class="btn-action btn-status-progress">
+                                                        IN_PROGRESS
+                                                    </button>
+                                                </form>
+                                            {% elif report.status == "IN_PROGRESS" %}
+                                                <form method="post" action="{% url 'update_status' report.pk %}" class="status-form status-confirm-form" data-next-status="RESOLVED">
+                                                    {% csrf_token %}
+                                                    <button type="submit" name="new_status" value="RESOLVED" class="btn-action btn-status-resolved">
+                                                        RESOLVED
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    Belum ada laporan.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+
 </div>
 
-<div class="modal fade" id="reportDetailModal" tabindex="-1" aria-labelledby="reportDetailModalLabel" aria-hidden="true">
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="reportDetailModalLabel">
-                    Detail Laporan
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content detail-modal-card">
+            <div class="modal-header detail-modal-header">
+                <h5 class="modal-title detail-modal-title" id="detailModalLabel">Detail Laporan</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
             </div>
 
-            <div class="modal-body">
-                <div class="mb-3">
-                    <strong>Judul:</strong>
-                    <p id="modalTitle" class="mb-0">-</p>
+            <div class="modal-body detail-modal-body">
+                <div id="detailModalLoading" class="text-center text-muted py-4">
+                    <div class="spinner-border text-primary mb-3" role="status"></div>
+                    <p class="mb-0">Memuat detail laporan...</p>
                 </div>
 
-                <div class="mb-3">
-                    <strong>Kategori:</strong>
-                    <p id="modalCategory" class="mb-0">-</p>
-                </div>
+                <div id="detailModalContent" class="d-none">
+                    <div class="detail-top">
+                        <div>
+                            <h4 class="detail-report-title" id="detailTitle">-</h4>
+                            <p class="detail-date" id="detailDate">-</p>
+                        </div>
+                        <span class="badge bg-secondary" id="detailStatus">-</span>
+                    </div>
 
-                <div class="mb-3">
-                    <strong>Lokasi:</strong>
-                    <p id="modalLocation" class="mb-0">-</p>
-                </div>
+                    <div class="detail-grid">
+                        <div class="detail-box">
+                            <div class="detail-info-label">Kategori</div>
+                            <p class="detail-info-value" id="detailCategory">-</p>
+                        </div>
 
-                <div class="mb-3">
-                    <strong>Status:</strong>
-                    <p id="modalStatus" class="mb-0">-</p>
-                </div>
+                        <div class="detail-box">
+                            <div class="detail-info-label">Lokasi</div>
+                            <p class="detail-info-value" id="detailLocation">-</p>
+                        </div>
 
-                <div class="mb-3">
-                    <strong>Waktu Dibuat:</strong>
-                    <p id="modalCreatedAt" class="mb-0">-</p>
-                </div>
+                        <div class="detail-box">
+                            <div class="detail-info-label">Pelapor</div>
+                            <p class="detail-info-value" id="detailReporter">-</p>
+                        </div>
 
-                <div class="mb-3">
-                    <strong>Deskripsi:</strong>
-                    <p id="modalDescription" class="mb-0">-</p>
+                        <div class="detail-box">
+                            <div class="detail-info-label">ID Laporan</div>
+                            <p class="detail-info-value" id="detailId">-</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-info-label mb-2">Deskripsi</div>
+                    <div class="detail-description-box" id="detailDescription">-</div>
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <button type="button" class="btn btn-outline-primary fw-bold" data-bs-dismiss="modal">
                     Tutup
                 </button>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('liveSearchInput');
+    function getCookie(name) {
+        let cookieValue = null;
+
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+
+        return cookieValue;
+    }
+
+    function escapeHtml(value) {
+        if (value === null || value === undefined) {
+            return '';
+        }
+
+        return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    function getBadgeClass(status) {
+        if (status === 'DRAFT') {
+            return 'bg-secondary';
+        }
+
+        if (status === 'REPORTED') {
+            return 'bg-info';
+        }
+
+        if (status === 'VERIFIED') {
+            return 'bg-primary';
+        }
+
+        if (status === 'IN_PROGRESS') {
+            return 'bg-warning text-dark';
+        }
+
+        if (status === 'RESOLVED') {
+            return 'bg-success';
+        }
+
+        return 'bg-secondary';
+    }
+
+    function getStatusButton(report) {
+        if (report.status === 'DRAFT') {
+            return '<button type="button" class="btn-action btn-status-reported btn-status-ajax" data-report-id="' + report.id + '" data-next-status="REPORTED">REPORTED</button>';
+        }
+
+        if (report.status === 'REPORTED') {
+            return '<button type="button" class="btn-action btn-status-verified btn-status-ajax" data-report-id="' + report.id + '" data-next-status="VERIFIED">VERIFIED</button>';
+        }
+
+        if (report.status === 'VERIFIED') {
+            return '<button type="button" class="btn-action btn-status-progress btn-status-ajax" data-report-id="' + report.id + '" data-next-status="IN_PROGRESS">IN_PROGRESS</button>';
+        }
+
+        if (report.status === 'IN_PROGRESS') {
+            return '<button type="button" class="btn-action btn-status-resolved btn-status-ajax" data-report-id="' + report.id + '" data-next-status="RESOLVED">RESOLVED</button>';
+        }
+
+        return '';
+    }
+
+    function renderReportRows(reports) {
         const tableBody = document.getElementById('reportTableBody');
-        const config = document.getElementById('reportConfig');
 
-        const isAdmin = config.getAttribute('data-is-admin') === 'true';
-        const csrfToken = config.getAttribute('data-csrf');
-
-        let debounceTimer = null;
-
-        function getStatusBadge(status) {
-            if (status === 'REPORTED') {
-                return '<span class="badge bg-secondary">Reported</span>';
-            }
-
-            if (status === 'VERIFIED') {
-                return '<span class="badge bg-primary">Verified</span>';
-            }
-
-            if (status === 'IN_PROGRESS') {
-                return '<span class="badge bg-warning text-dark">In Progress</span>';
-            }
-
-            if (status === 'RESOLVED') {
-                return '<span class="badge bg-success">Resolved</span>';
-            }
-
-            return '<span class="badge bg-dark">' + status + '</span>';
+        if (!tableBody) {
+            return;
         }
 
-        function getAdminActionButtons(report) {
-            if (!isAdmin) {
-                return '';
-            }
-
-            let statusButton = '';
-
-            if (report.status === 'REPORTED') {
-                statusButton =
-                    '<form method="post" action="/reports/' + report.id + '/status/" class="d-inline">' +
-                        '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">' +
-                        '<input type="hidden" name="status" value="VERIFIED">' +
-                        '<button type="submit" class="btn btn-primary btn-sm" onclick="return confirm(\'Yakin ingin mengubah status menjadi VERIFIED?\')">' +
-                            'Verifikasi' +
-                        '</button>' +
-                    '</form>';
-            } else if (report.status === 'VERIFIED') {
-                statusButton =
-                    '<form method="post" action="/reports/' + report.id + '/status/" class="d-inline">' +
-                        '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">' +
-                        '<input type="hidden" name="status" value="IN_PROGRESS">' +
-                        '<button type="submit" class="btn btn-warning btn-sm" onclick="return confirm(\'Yakin ingin mengubah status menjadi IN_PROGRESS?\')">' +
-                            'Proses' +
-                        '</button>' +
-                    '</form>';
-            } else if (report.status === 'IN_PROGRESS') {
-                statusButton =
-                    '<form method="post" action="/reports/' + report.id + '/status/" class="d-inline">' +
-                        '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">' +
-                        '<input type="hidden" name="status" value="RESOLVED">' +
-                        '<button type="submit" class="btn btn-success btn-sm" onclick="return confirm(\'Yakin ingin mengubah status menjadi RESOLVED?\')">' +
-                            'Selesaikan' +
-                        '</button>' +
-                    '</form>';
-            }
-
-            return '' +
-                '<a href="/reports/' + report.id + '/edit/" class="btn btn-info btn-sm">Edit</a>' +
-                '<a href="/reports/' + report.id + '/delete/" class="btn btn-danger btn-sm" onclick="return confirm(\'Yakin ingin menghapus laporan ini?\')">Delete</a>' +
-                statusButton;
+        if (!reports || reports.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">Tidak ada laporan yang cocok.</td></tr>';
+            return;
         }
 
-        function renderReports(reports) {
-            tableBody.innerHTML = '';
+        tableBody.innerHTML = reports.map(function (report) {
+            const editUrl = '/reports/' + report.id + '/edit/';
+            const deleteUrl = '/reports/' + report.id + '/delete/';
 
-            if (reports.length === 0) {
-                tableBody.innerHTML =
-                    '<tr>' +
-                        '<td colspan="4" class="text-center py-4">' +
-                            'Data tidak ditemukan.' +
-                        '</td>' +
-                    '</tr>';
-                return;
-            }
-
-            reports.forEach(function (report) {
-                const row = document.createElement('tr');
-
-                row.innerHTML =
-                    '<td>' + report.title + '</td>' +
-                    '<td>' + report.location + '</td>' +
-                    '<td>' + getStatusBadge(report.status) + '</td>' +
-                    '<td>' +
-                        '<div class="d-flex flex-wrap gap-2">' +
-                            '<button type="button" class="btn btn-secondary btn-sm detail-btn" data-id="' + report.id + '">' +
-                                'Detail' +
-                            '</button>' +
-                            getAdminActionButtons(report) +
+            return (
+                '<tr>' +
+                    '<td class="fw-semibold cell-title">' + escapeHtml(report.title) + '</td>' +
+                    '<td class="cell-category">' + escapeHtml(report.category) + '</td>' +
+                    '<td class="cell-location">' + escapeHtml(report.location) + '</td>' +
+                    '<td><span class="badge ' + getBadgeClass(report.status) + '">' + escapeHtml(report.status) + '</span></td>' +
+                    '<td class="cell-date">' + escapeHtml(report.created_at) + '</td>' +
+                    '<td class="text-end">' +
+                        '<div class="action-buttons">' +
+                            '<button type="button" class="btn-action btn-detail-action btn-open-detail" data-report-id="' + report.id + '">Detail</button>' +
+                            '<a href="' + editUrl + '" class="btn-action btn-edit-action">Edit</a>' +
+                            '<a href="' + deleteUrl + '" class="btn-action btn-delete-action btn-delete-confirm">Hapus</a>' +
+                            getStatusButton(report) +
                         '</div>' +
-                    '</td>';
+                    '</td>' +
+                '</tr>'
+            );
+        }).join('');
+    }
 
-                tableBody.appendChild(row);
+    function updateStatusFromList(reportId, newStatus) {
+        const csrfToken = getCookie('csrftoken');
+        const formData = new FormData();
+
+        formData.append('new_status', newStatus);
+
+        fetch('/reports/' + reportId + '/status/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
+            body: formData
+        })
+            .then(function () {
+                window.location.reload();
+            })
+            .catch(function () {
+                alert('Gagal mengubah status laporan.');
             });
-        }
+    }
 
-        function loadReports(keyword) {
-            fetch('/reports/search/?q=' + encodeURIComponent(keyword))
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (data) {
-                    console.log('Data live search diterima:', data);
-                    renderReports(data.reports);
-                })
-                .catch(function (error) {
-                    console.error('Gagal mengambil data laporan:', error);
-                });
-        }
+    function showDetailModal(reportId) {
+        const loading = document.getElementById('detailModalLoading');
+        const content = document.getElementById('detailModalContent');
+        const modalElement = document.getElementById('detailModal');
+        const detailModal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
-        searchInput.addEventListener('input', function () {
-            clearTimeout(debounceTimer);
+        loading.classList.remove('d-none');
+        content.classList.add('d-none');
 
-            debounceTimer = setTimeout(function () {
-                loadReports(searchInput.value);
-            }, 400);
-        });
+        detailModal.show();
 
-        tableBody.addEventListener('click', function (event) {
-            if (event.target.classList.contains('detail-btn')) {
-                const reportId = event.target.getAttribute('data-id');
+        fetch('/reports/' + reportId + '/json/')
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Gagal memuat detail laporan.');
+                }
 
-                fetch('/reports/' + reportId + '/json/')
+                return response.json();
+            })
+            .then(function (report) {
+                document.getElementById('detailTitle').textContent = report.title || '-';
+                document.getElementById('detailCategory').textContent = report.category || '-';
+                document.getElementById('detailLocation').textContent = report.location || '-';
+                document.getElementById('detailDescription').textContent = report.description || '-';
+                document.getElementById('detailReporter').textContent = report.reporter || report.reporter_name || 'Warga Anonim';
+                document.getElementById('detailId').textContent = report.id || '-';
+                document.getElementById('detailDate').textContent = report.created_at || '-';
+
+                const statusBadge = document.getElementById('detailStatus');
+                statusBadge.textContent = report.status || '-';
+                statusBadge.className = 'badge ' + getBadgeClass(report.status);
+
+                loading.classList.add('d-none');
+                content.classList.remove('d-none');
+            })
+            .catch(function () {
+                loading.innerHTML = '<div class="text-danger fw-bold">Gagal memuat detail laporan.</div>';
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function () {
+                const keyword = searchInput.value;
+
+                fetch('/reports/search/?q=' + encodeURIComponent(keyword))
                     .then(function (response) {
                         return response.json();
                     })
-                    .then(function (report) {
-                        console.log('Detail laporan diterima:', report);
-
-                        document.getElementById('modalTitle').textContent = report.title;
-                        document.getElementById('modalCategory').textContent = report.category;
-                        document.getElementById('modalLocation').textContent = report.location;
-                        document.getElementById('modalCreatedAt').textContent = report.created_at;
-                        document.getElementById('modalDescription').textContent = report.description;
-                        document.getElementById('modalStatus').innerHTML = getStatusBadge(report.status);
-
-                        const modalElement = document.getElementById('reportDetailModal');
-                        const modal = new bootstrap.Modal(modalElement);
-                        modal.show();
+                    .then(function (data) {
+                        const reports = data.results || data.reports || [];
+                        renderReportRows(reports);
                     })
-                    .catch(function (error) {
-                        console.error('Gagal mengambil detail laporan:', error);
+                    .catch(function () {
+                        renderReportRows([]);
                     });
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            const detailButton = event.target.closest('.btn-open-detail');
+
+            if (detailButton) {
+                const reportId = detailButton.getAttribute('data-report-id');
+                showDetailModal(reportId);
+                return;
+            }
+
+            const deleteButton = event.target.closest('.btn-delete-confirm');
+
+            if (deleteButton) {
+                const yakinHapus = confirm('Apakah kamu yakin ingin menghapus laporan ini?');
+
+                if (!yakinHapus) {
+                    event.preventDefault();
+                }
+
+                return;
+            }
+
+            const statusButton = event.target.closest('.btn-status-ajax');
+
+            if (statusButton) {
+                const reportId = statusButton.getAttribute('data-report-id');
+                const nextStatus = statusButton.getAttribute('data-next-status');
+                const yakinStatus = confirm('Apakah kamu yakin ingin mengubah status laporan menjadi ' + nextStatus + '?');
+
+                if (yakinStatus) {
+                    updateStatusFromList(reportId, nextStatus);
+                }
+            }
+        });
+
+        document.addEventListener('submit', function (event) {
+            const statusForm = event.target.closest('.status-confirm-form');
+
+            if (statusForm) {
+                const nextStatus = statusForm.getAttribute('data-next-status');
+                const yakinStatus = confirm('Apakah kamu yakin ingin mengubah status laporan menjadi ' + nextStatus + '?');
+
+                if (!yakinStatus) {
+                    event.preventDefault();
+                }
             }
         });
     });

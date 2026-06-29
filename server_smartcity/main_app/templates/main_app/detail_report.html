@@ -1,51 +1,216 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Detail Report - Enha City{% endblock %}
+{% block title %}Detail Laporan - EnhaReport{% endblock %}
+
+{% block extra_css %}
+<style>
+    .breadcrumb {
+        margin-bottom: 1rem;
+    }
+
+    .breadcrumb a {
+        color: #d63384;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .breadcrumb .active {
+        color: #6c6f80;
+        font-weight: 600;
+    }
+
+    .detail-card {
+        max-width: 760px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.98);
+        border: 1.6px solid #f2c2d8;
+        border-radius: 24px;
+        box-shadow: 0 18px 42px rgba(179, 29, 104, 0.14);
+        overflow: hidden;
+    }
+
+    .detail-card-header {
+        padding: 1.2rem 1.4rem;
+        border-bottom: 1px solid #efd2de;
+    }
+
+    .detail-title {
+        color: #b31d68;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+    }
+
+    .detail-subtitle {
+        color: #8b3b63;
+        margin-bottom: 0;
+    }
+
+    .detail-card-body {
+        padding: 1.4rem;
+    }
+
+    .detail-report-title {
+        color: #202233;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        word-break: break-word;
+    }
+
+    .detail-label {
+        font-size: 0.78rem;
+        color: #8b3b63;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 0.25rem;
+    }
+
+    .detail-value {
+        color: #202233;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        word-break: break-word;
+    }
+
+    .description-box {
+        background: #fff5fa;
+        border: 1px solid #f4c2d9;
+        border-radius: 16px;
+        padding: 1rem;
+        color: #202233;
+        min-height: 100px;
+        word-break: break-word;
+    }
+
+    .detail-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-top: 1.2rem;
+    }
+
+    .badge {
+        font-weight: 800;
+        border-radius: 999px;
+        padding: 0.45rem 0.7rem;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Detail Laporan</li>
-    </ol>
-</nav>
+<div class="container-fluid">
 
-<div class="row justify-content-center">
-    <div class="col-12 col-md-10 col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h1 class="h3 mb-4">Detail Laporan</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'report_list' %}">Reports</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Detail Laporan
+            </li>
+        </ol>
+    </nav>
 
-                <h2 class="h4">{{ report.title }}</h2>
-                <p><strong>Kategori:</strong> {{ report.category }}</p>
-                <p><strong>Deskripsi:</strong> {{ report.description }}</p>
-                <p><strong>Lokasi:</strong> {{ report.location }}</p>
-                <p>
-                    <strong>Status:</strong>
-                    {% if report.status == 'REPORTED' %}
-                        <span class="badge bg-secondary">Reported</span>
-                    {% elif report.status == 'VERIFIED' %}
-                        <span class="badge bg-primary">Verified</span>
-                    {% elif report.status == 'IN_PROGRESS' %}
-                        <span class="badge bg-warning text-dark">In Progress</span>
-                    {% elif report.status == 'RESOLVED' %}
-                        <span class="badge bg-success">Resolved</span>
-                    {% else %}
-                        <span class="badge bg-dark">{{ report.status }}</span>
-                    {% endif %}
-                </p>
-                <p><strong>Dibuat pada:</strong> {{ report.created_at }}</p>
+    <div class="detail-card">
+        <div class="detail-card-header">
+            <h2 class="detail-title">Detail Laporan</h2>
+            <p class="detail-subtitle">Informasi lengkap laporan warga.</p>
+        </div>
 
-                <a href="{% url 'report_list' %}" class="btn btn-secondary mb-1">Kembali</a>
+        <div class="detail-card-body">
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                <h3 class="detail-report-title">{{ report.title }}</h3>
+
+                {% if report.status == "DRAFT" %}
+                    <span class="badge bg-secondary">DRAFT</span>
+                {% elif report.status == "REPORTED" %}
+                    <span class="badge bg-info">REPORTED</span>
+                {% elif report.status == "VERIFIED" %}
+                    <span class="badge bg-primary">VERIFIED</span>
+                {% elif report.status == "IN_PROGRESS" %}
+                    <span class="badge bg-warning text-dark">IN_PROGRESS</span>
+                {% elif report.status == "RESOLVED" %}
+                    <span class="badge bg-success">RESOLVED</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ report.status }}</span>
+                {% endif %}
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <div class="detail-label">Kategori</div>
+                    <div class="detail-value">{{ report.category }}</div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="detail-label">Lokasi</div>
+                    <div class="detail-value">{{ report.location }}</div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="detail-label">Dibuat Pada</div>
+                    <div class="detail-value">{{ report.created_at|date:"d-m-Y H:i" }}</div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="detail-label">Diperbarui Pada</div>
+                    <div class="detail-value">{{ report.updated_at|date:"d-m-Y H:i" }}</div>
+                </div>
+            </div>
+
+            <div class="detail-label">Deskripsi</div>
+            <div class="description-box">
+                {{ report.description }}
+            </div>
+
+            {% if user.is_authenticated and user.is_admin and next_statuses %}
+                <div class="detail-actions">
+                    {% for status_item in next_statuses %}
+                        <form method="post" action="{% url 'update_status' report.pk %}">
+                            {% csrf_token %}
+
+                            {% if status_item == "REPORTED" %}
+                                <button type="submit" name="new_status" value="{{ status_item }}" class="btn btn-info fw-bold text-white">
+                                    REPORTED
+                                </button>
+                            {% elif status_item == "VERIFIED" %}
+                                <button type="submit" name="new_status" value="{{ status_item }}" class="btn btn-primary fw-bold">
+                                    VERIFIED
+                                </button>
+                            {% elif status_item == "IN_PROGRESS" %}
+                                <button type="submit" name="new_status" value="{{ status_item }}" class="btn btn-warning fw-bold text-dark">
+                                    IN_PROGRESS
+                                </button>
+                            {% elif status_item == "RESOLVED" %}
+                                <button type="submit" name="new_status" value="{{ status_item }}" class="btn btn-success fw-bold">
+                                    RESOLVED
+                                </button>
+                            {% endif %}
+                        </form>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="detail-actions">
+                <a href="{% url 'report_list' %}" class="btn btn-outline-primary fw-bold">
+                    Kembali
+                </a>
 
                 {% if user.is_authenticated and user.is_admin %}
-                    <a href="{% url 'report_update' report.pk %}" class="btn btn-info mb-1">Edit</a>
-                    <a href="{% url 'report_delete' report.pk %}" class="btn btn-danger mb-1"
-                       onclick="return confirm('Yakin ingin menghapus laporan ini?')">Delete</a>
+                    <a href="{% url 'report_update' report.pk %}" class="btn btn-warning fw-bold text-dark">
+                        Edit
+                    </a>
+
+                    <a href="{% url 'report_delete' report.pk %}" class="btn btn-danger fw-bold">
+                        Hapus
+                    </a>
                 {% endif %}
             </div>
         </div>
     </div>
+
 </div>
 {% endblock %}

@@ -1,197 +1,95 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Dashboard Statistik | EnhaReport{% endblock %}
+{% block title %}Dashboard Admin - EnhaReport{% endblock %}
 
-{% block content %}
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+{% block extra_css %}
 <style>
-    .dashboard-page {
-        padding-bottom: 2rem;
-    }
-
-    .dashboard-hero {
-        background: rgba(255, 250, 253, 0.96);
-        border: 1.8px solid #efabc9;
-        border-radius: 30px;
-        padding: 2rem;
-        box-shadow: 0 18px 42px rgba(179, 29, 104, 0.14);
-        margin-bottom: 2rem;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .dashboard-hero::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, rgba(214, 51, 132, 0.055), transparent 55%);
-        pointer-events: none;
-    }
-
-    .dashboard-hero > .row {
-        position: relative;
-        z-index: 2;
-    }
-
-    .dashboard-title {
-        font-size: 2.2rem;
+    .page-heading-title {
+        font-size: clamp(1.65rem, 2.4vw, 2.15rem);
         font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.3px;
         color: #b31d68;
-        margin-bottom: 0.4rem;
-        letter-spacing: -0.6px;
+        margin-bottom: 0.25rem;
     }
 
-    .dashboard-subtitle {
+    .page-heading-subtitle {
         color: #8b3b63;
+        font-size: 0.95rem;
         margin-bottom: 0;
-        font-size: 1rem;
     }
 
-    .stat-card {
-        background: rgba(255, 255, 255, 0.98);
-        border: 1.6px solid #f0b7d2;
-        border-radius: 24px;
-        padding: 1.4rem;
-        box-shadow: 0 14px 32px rgba(179, 29, 104, 0.12);
-        height: 100%;
+    .breadcrumb {
+        margin-bottom: 1rem;
     }
 
-    .stat-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #fde6f1;
-        color: #bf1f6a;
-        font-size: 1.4rem;
-        margin-bottom: 0.8rem;
-    }
-
-    .stat-number {
-        font-size: 1.8rem;
+    .breadcrumb a {
+        color: #d63384;
         font-weight: 800;
-        color: #ad1f63;
-        margin-bottom: 0.2rem;
+        text-decoration: none;
     }
 
-    .stat-label {
-        color: #8b3b63;
-        font-size: 0.92rem;
-        margin-bottom: 0;
+    .breadcrumb .active {
+        color: #6c6f80;
+        font-weight: 600;
     }
 
     .dashboard-card {
-        background: rgba(255, 250, 253, 0.97);
-        border-radius: 28px;
-        border: 1.8px solid #efabc9;
-        box-shadow: 0 18px 42px rgba(179, 29, 104, 0.13);
+        background: rgba(255, 255, 255, 0.97);
+        border: 1.5px solid #f2c2d8;
+        border-radius: 20px;
+        box-shadow: 0 16px 34px rgba(179, 29, 104, 0.10);
         overflow: hidden;
-        height: 100%;
-        transition: 0.2s ease;
-    }
-
-    .dashboard-card:hover {
-        border-color: #e47cad;
-        box-shadow: 0 22px 48px rgba(179, 29, 104, 0.16);
     }
 
     .dashboard-card-header {
-        padding: 1.1rem 1.4rem;
-        border-bottom: 1.5px solid #efd2de;
-        background: rgba(255, 248, 251, 0.92);
-    }
-
-    .dashboard-card-header h5 {
-        margin: 0;
-        font-size: 1.05rem;
-        color: #b31d68;
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid #efd2de;
         font-weight: 800;
-    }
-
-    .dashboard-card-body {
-        padding: 1.4rem;
-        background: rgba(255, 250, 253, 0.72);
+        color: #202233;
     }
 
     .chart-box {
+        height: 280px;
+        padding: 1rem;
         position: relative;
-        min-height: 310px;
     }
 
-    .chart-box-small {
-        position: relative;
-        min-height: 280px;
-    }
-
-    .table-responsive {
-        border-radius: 18px;
-        overflow: hidden;
-        border: 1px solid #f1c2d8;
-        background: #fff;
-    }
-
-    .report-table {
+    .mini-table {
         margin-bottom: 0;
+        table-layout: fixed;
     }
 
-    .report-table thead th {
-        background: #4a4045 !important;
-        color: white !important;
-        font-size: 0.9rem;
-        padding: 0.9rem;
-        border-color: #5a4c53 !important;
+    .mini-table thead th {
+        background: #2f2f42;
+        color: white;
+        font-weight: 800;
+        border: none;
+        padding: 0.65rem 0.6rem;
+        font-size: 0.85rem;
     }
 
-    .report-table td {
-        font-size: 0.88rem;
-        padding: 0.9rem;
-        color: #7a3059;
-        border-color: #f1d7e4;
+    .mini-table tbody td {
+        vertical-align: middle;
+        border-color: #f5cddd;
+        padding: 0.65rem 0.6rem;
+        font-size: 0.85rem;
     }
 
-    .badge-soft-warning {
-        background: #fff1c6;
-        color: #9a6a00;
+    .mini-table td {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .badge {
+        font-weight: 800;
         border-radius: 999px;
-        padding: 0.45rem 0.75rem;
-        font-weight: 700;
-    }
-
-    .badge-soft-success {
-        background: #dff5e8;
-        color: #27704a;
-        border-radius: 999px;
-        padding: 0.45rem 0.75rem;
-        font-weight: 700;
-    }
-
-    .empty-row {
-        color: #9b6a82;
-        text-align: center;
-        padding: 1.2rem !important;
-    }
-
-    @media (max-width: 768px) {
-        .dashboard-title {
-            font-size: 1.7rem;
-        }
-
-        .dashboard-hero {
-            padding: 1.4rem;
-            border-radius: 24px;
-        }
-
-        .dashboard-card {
-            border-radius: 24px;
-        }
     }
 </style>
+{% endblock %}
 
-<div class="dashboard-page">
+{% block content %}
+<div class="container-fluid">
 
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -204,280 +102,211 @@
         </ol>
     </nav>
 
-    <div class="dashboard-hero">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1 class="dashboard-title">
-                    <i class="bi bi-bar-chart-fill"></i> Dashboard Statistik Laporan
-                </h1>
-                <p class="dashboard-subtitle">
-                    Ringkasan visual status dan kategori laporan masyarakat pada EnhaReport.
-                </p>
-            </div>
-            <div class="col-md-4 mt-3 mt-md-0">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="bi bi-file-earmark-text-fill"></i>
-                    </div>
-                    <div class="stat-number" id="totalReports">0</div>
-                    <p class="stat-label">Total laporan dalam database</p>
-                </div>
-            </div>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h1 class="page-heading-title">Dashboard Admin</h1>
+            <p class="page-heading-subtitle">
+                Ringkasan statistik laporan Smart City. Total laporan: {{ total_laporan }}
+            </p>
         </div>
+
+        <a href="{% url 'report_list' %}" class="btn btn-primary fw-bold px-4 py-2">
+            Lihat Semua Laporan
+        </a>
     </div>
 
+    {{ status_labels|json_script:"status-labels-data" }}
+    {{ status_values|json_script:"status-values-data" }}
+    {{ category_labels|json_script:"category-labels-data" }}
+    {{ category_values|json_script:"category-values-data" }}
+
     <div class="row g-4 mb-4">
-        <div class="col-lg-5">
-            <div class="dashboard-card">
+        <div class="col-12 col-lg-6">
+            <div class="dashboard-card h-100">
                 <div class="dashboard-card-header">
-                    <h5><i class="bi bi-pie-chart-fill"></i> Distribusi Status Laporan</h5>
+                    Distribusi Status Laporan
                 </div>
-                <div class="dashboard-card-body">
-                    <div class="chart-box">
-                        <canvas id="statusChart"></canvas>
-                    </div>
+                <div class="chart-box">
+                    <canvas id="statusChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-7">
-            <div class="dashboard-card">
+        <div class="col-12 col-lg-6">
+            <div class="dashboard-card h-100">
                 <div class="dashboard-card-header">
-                    <h5><i class="bi bi-bar-chart-fill"></i> Distribusi Kategori Laporan</h5>
+                    Distribusi Kategori Laporan
                 </div>
-                <div class="dashboard-card-body">
-                    <div class="chart-box-small">
-                        <canvas id="categoryChart"></canvas>
-                    </div>
+                <div class="chart-box">
+                    <canvas id="categoryChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row g-4">
-        <div class="col-lg-6">
+        <div class="col-12 col-lg-6">
             <div class="dashboard-card">
                 <div class="dashboard-card-header">
-                    <h5><i class="bi bi-exclamation-circle-fill"></i> 5 Laporan Terakhir Dilaporkan</h5>
+                    Laporan Aktif Terbaru
                 </div>
-                <div class="dashboard-card-body">
-                    <span class="badge badge-soft-warning mb-3">REPORTED</span>
-                    <div class="table-responsive">
-                        <table class="table report-table table-hover">
-                            <thead>
+
+                <div class="table-responsive">
+                    <table class="table mini-table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Judul</th>
+                                <th>Kategori</th>
+                                <th>Lokasi</th>
+                                <th>Status</th>
+                                <th>Tanggal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportedTable">
+                            {% for report in laporan_baru %}
                                 <tr>
-                                    <th>Judul</th>
-                                    <th>Kategori</th>
-                                    <th>Waktu</th>
+                                    <td class="fw-semibold">{{ report.title }}</td>
+                                    <td>{{ report.category }}</td>
+                                    <td>{{ report.location }}</td>
+                                    <td>
+                                        {% if report.status == "REPORTED" %}
+                                            <span class="badge bg-info">REPORTED</span>
+                                        {% elif report.status == "VERIFIED" %}
+                                            <span class="badge bg-primary">VERIFIED</span>
+                                        {% elif report.status == "IN_PROGRESS" %}
+                                            <span class="badge bg-warning text-dark">IN_PROGRESS</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ report.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ report.created_at|date:"d-m-Y H:i" }}</td>
                                 </tr>
-                            </thead>
-                            <tbody id="latestReportedTable">
+                            {% empty %}
                                 <tr>
-                                    <td colspan="3" class="empty-row">Memuat data...</td>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        Belum ada data.
+                                    </td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-6">
+        <div class="col-12 col-lg-6">
             <div class="dashboard-card">
                 <div class="dashboard-card-header">
-                    <h5><i class="bi bi-check-circle-fill"></i> 5 Laporan Terakhir Selesai</h5>
+                    Laporan Selesai
                 </div>
-                <div class="dashboard-card-body">
-                    <span class="badge badge-soft-success mb-3">RESOLVED</span>
-                    <div class="table-responsive">
-                        <table class="table report-table table-hover">
-                            <thead>
+
+                <div class="table-responsive">
+                    <table class="table mini-table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Judul</th>
+                                <th>Kategori</th>
+                                <th>Lokasi</th>
+                                <th>Status</th>
+                                <th>Tanggal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resolvedTable">
+                            {% for report in laporan_selesai %}
                                 <tr>
-                                    <th>Judul</th>
-                                    <th>Kategori</th>
-                                    <th>Waktu</th>
+                                    <td class="fw-semibold">{{ report.title }}</td>
+                                    <td>{{ report.category }}</td>
+                                    <td>{{ report.location }}</td>
+                                    <td>
+                                        <span class="badge bg-success">RESOLVED</span>
+                                    </td>
+                                    <td>{{ report.updated_at|date:"d-m-Y H:i" }}</td>
                                 </tr>
-                            </thead>
-                            <tbody id="latestResolvedTable">
+                            {% empty %}
                                 <tr>
-                                    <td colspan="3" class="empty-row">Memuat data...</td>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        Belum ada data.
+                                    </td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        fetch('/dashboard/data/')
-            .then(response => response.json())
-            .then(data => {
-                console.log('Data dashboard diterima:', data);
+    const statusLabels = JSON.parse(document.getElementById('status-labels-data').textContent);
+    const statusValues = JSON.parse(document.getElementById('status-values-data').textContent);
+    const categoryLabels = JSON.parse(document.getElementById('category-labels-data').textContent);
+    const categoryValues = JSON.parse(document.getElementById('category-values-data').textContent);
 
-                document.getElementById('totalReports').textContent = data.total_reports;
+    const statusCanvas = document.getElementById('statusChart');
+    const categoryCanvas = document.getElementById('categoryChart');
 
-                const statusLabels = data.status_distribution.map(item => item.status);
-                const statusPercentages = data.status_distribution.map(item => item.percentage);
+    if (statusCanvas) {
+        new Chart(statusCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    label: 'Jumlah Laporan',
+                    data: statusValues,
+                    backgroundColor: [
+                        '#6c757d',
+                        '#0dcaf0',
+                        '#0d6efd',
+                        '#ffc107',
+                        '#198754'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    }
 
-                const statusCtx = document.getElementById('statusChart');
-
-                new Chart(statusCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: statusLabels,
-                        datasets: [{
-                            label: 'Persentase Status',
-                            data: statusPercentages,
-                            backgroundColor: [
-                                '#ef58a3',
-                                '#f7b6d2',
-                                '#bf1f6a',
-                                '#7a3059'
-                            ],
-                            borderColor: '#fffafb',
-                            borderWidth: 4,
-                            hoverOffset: 8
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: '62%',
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    color: '#7a3059',
-                                    font: {
-                                        family: 'Poppins',
-                                        size: 12,
-                                        weight: '600'
-                                    },
-                                    padding: 18
-                                }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.label + ': ' + context.raw + '%';
-                                    }
-                                }
-                            }
+    if (categoryCanvas) {
+        new Chart(categoryCanvas, {
+            type: 'bar',
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    label: 'Jumlah Laporan',
+                    data: categoryValues,
+                    backgroundColor: '#8ec9ed',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
                         }
                     }
-                });
-
-                const categoryLabels = data.category_distribution.map(item => item.category);
-                const categoryTotals = data.category_distribution.map(item => item.total);
-
-                const categoryCtx = document.getElementById('categoryChart');
-
-                new Chart(categoryCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: categoryLabels,
-                        datasets: [{
-                            label: 'Jumlah Laporan',
-                            data: categoryTotals,
-                            backgroundColor: '#ef58a3',
-                            borderColor: '#bf1f6a',
-                            borderWidth: 2,
-                            borderRadius: 12
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    color: '#7a3059',
-                                    font: {
-                                        family: 'Poppins',
-                                        weight: '600'
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                ticks: {
-                                    color: '#7a3059',
-                                    font: {
-                                        family: 'Poppins',
-                                        size: 11
-                                    }
-                                },
-                                grid: {
-                                    color: 'rgba(234, 215, 225, 0.7)'
-                                }
-                            },
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    color: '#7a3059',
-                                    font: {
-                                        family: 'Poppins'
-                                    }
-                                },
-                                grid: {
-                                    color: 'rgba(234, 215, 225, 0.7)'
-                                }
-                            }
-                        }
-                    }
-                });
-
-                const reportedTable = document.getElementById('latestReportedTable');
-                reportedTable.innerHTML = '';
-
-                if (data.latest_reported.length === 0) {
-                    reportedTable.innerHTML = `
-                        <tr>
-                            <td colspan="3" class="empty-row">Belum ada laporan REPORTED.</td>
-                        </tr>
-                    `;
-                } else {
-                    data.latest_reported.forEach(report => {
-                        reportedTable.innerHTML += `
-                            <tr>
-                                <td>${report.title}</td>
-                                <td>${report.category}</td>
-                                <td>${report.created_at}</td>
-                            </tr>
-                        `;
-                    });
                 }
-
-                const resolvedTable = document.getElementById('latestResolvedTable');
-                resolvedTable.innerHTML = '';
-
-                if (data.latest_resolved.length === 0) {
-                    resolvedTable.innerHTML = `
-                        <tr>
-                            <td colspan="3" class="empty-row">Belum ada laporan RESOLVED.</td>
-                        </tr>
-                    `;
-                } else {
-                    data.latest_resolved.forEach(report => {
-                        resolvedTable.innerHTML += `
-                            <tr>
-                                <td>${report.title}</td>
-                                <td>${report.category}</td>
-                                <td>${report.created_at}</td>
-                            </tr>
-                        `;
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Gagal mengambil data dashboard:', error);
-            });
-    });
+            }
+        });
+    }
 </script>
-
 {% endblock %}

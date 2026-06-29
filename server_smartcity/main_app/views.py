@@ -2,7 +2,7 @@ from django.views.generic import TemplateView, ListView, DetailView, CreateView,
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.db.models import Q
 
 from .models import Report
@@ -22,7 +22,7 @@ class AdminRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated or not request.user.is_admin:
             messages.error(request, 'Akses ditolak. Hanya admin yang dapat mengakses fitur ini.')
-            return redirect('report_list')
+            return redirect('home')
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -30,7 +30,7 @@ class HomeView(TemplateView):
     template_name = 'main_app/home.html'
 
 
-class ReportListView(ListView):
+class ReportListView(AdminRequiredMixin, ListView):
     model = Report
     template_name = 'main_app/report_list.html'
     context_object_name = 'reports'
@@ -39,13 +39,25 @@ class ReportListView(ListView):
         return visible_reports_for_user(self.request.user).order_by('-created_at')
 
 
-class ReportDetailView(DetailView):
+class ReportDetailView(AdminRequiredMixin, DetailView):
     model = Report
     template_name = 'main_app/detail_report.html'
     context_object_name = 'report'
 
     def get_queryset(self):
         return visible_reports_for_user(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        allowed_transitions = {
+            'REPORTED': ['VERIFIED'],
+            'VERIFIED': ['IN_PROGRESS'],
+            'IN_PROGRESS': ['RESOLVED'],
+            'RESOLVED': [],
+            'DRAFT': ['REPORTED'],
+        }
+        context['next_statuses'] = allowed_transitions.get(self.object.status, [])
+        return context
 
 
 class ReportCreateView(AdminRequiredMixin, CreateView):
@@ -93,16 +105,24 @@ class ReportUpdateStatusView(View):
     def post(self, request, pk):
         if not request.user.is_authenticated or not request.user.is_admin:
             messages.error(request, 'Akses ditolak. Hanya admin yang dapat mengakses fitur ini.')
-            return redirect('report_list')
+            return redirect('home')
 
         report = get_object_or_404(
             visible_reports_for_user(request.user),
             pk=pk
         )
 
-        new_status = request.POST.get('status')
+        new_status = request.POST.get('new_status') or request.POST.get('status')
 
-        if new_status in ['REPORTED', 'VERIFIED', 'IN_PROGRESS', 'RESOLVED']:
+        allowed_transitions = {
+            'REPORTED': ['VERIFIED'],
+            'VERIFIED': ['IN_PROGRESS'],
+            'IN_PROGRESS': ['RESOLVED'],
+            'RESOLVED': [],
+            'DRAFT': ['REPORTED'],
+        }
+
+        if new_status in allowed_transitions.get(report.status, []):
             report.status = new_status
             report.save()
             messages.success(request, 'Status laporan berhasil diubah.')
@@ -114,6 +134,9 @@ class ReportUpdateStatusView(View):
 
 class ReportSearchView(View):
     def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated or not request.user.is_admin:
+            return HttpResponseForbidden()
+
         keyword = request.GET.get('q', '')
 
         reports = visible_reports_for_user(request.user).order_by('-created_at')
@@ -140,7 +163,7 @@ class ReportSearchView(View):
             for report in reports
         ]
 
-        return JsonResponse({'reports': data})
+        return JsonResponse({'reports': data, 'results': data})
 
 
 class ReportDetailJsonView(View):
@@ -161,6 +184,22 @@ class ReportDetailJsonView(View):
         }
 
         return JsonResponse(data)
+
+
+def report_detail_api(request, pk):
+    report = get_object_or_404(Report, pk=pk)
+
+    data = {
+        'id': report.id,
+        'title': report.title,
+        'category': report.category,
+        'description': report.description,
+        'location': report.location,
+        'status': report.status,
+        'created_at': report.created_at.strftime('%d-%m-%Y %H:%M')
+    }
+
+    return JsonResponse(data)
 
 
 class AboutView(TemplateView):

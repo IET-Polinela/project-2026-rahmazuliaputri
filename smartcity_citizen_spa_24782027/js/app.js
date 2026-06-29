@@ -17,10 +17,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function initDashboard() {
     const tabMyReports = document.getElementById('tabMyReports');
-    const tabFeed = document.getElementById('tabFeed');
-    const openReportButton = document.querySelector('[data-bs-target="#reportModal"]');
+    const tabFeedKota = document.getElementById('tabFeedKota') || document.getElementById('tabFeed');
+    const openReportButton = document.getElementById('btnBukaModal');
     const btnDraft = document.getElementById('btnDraft');
-    const btnSubmitReport = document.getElementById('btnSubmitReport');
+    const btnSubmit = document.getElementById('btnSubmit');
 
     if (tabMyReports) {
         tabMyReports.onclick = function () {
@@ -31,8 +31,8 @@ function initDashboard() {
         };
     }
 
-    if (tabFeed) {
-        tabFeed.onclick = function () {
+    if (tabFeedKota) {
+        tabFeedKota.onclick = function () {
             currentTab = 'feed';
             currentPage = 1;
             setActiveTab();
@@ -52,8 +52,8 @@ function initDashboard() {
         };
     }
 
-    if (btnSubmitReport) {
-        btnSubmitReport.onclick = function () {
+    if (btnSubmit) {
+        btnSubmit.onclick = function () {
             submitReportForm('REPORTED');
         };
     }
@@ -64,21 +64,21 @@ function initDashboard() {
 
 function setActiveTab() {
     const tabMyReports = document.getElementById('tabMyReports');
-    const tabFeed = document.getElementById('tabFeed');
+    const tabFeedKota = document.getElementById('tabFeedKota') || document.getElementById('tabFeed');
     const dashboardTitle = document.getElementById('dashboardTitle');
 
-    if (!tabMyReports || !tabFeed || !dashboardTitle) {
+    if (!tabMyReports || !tabFeedKota || !dashboardTitle) {
         return;
     }
 
     tabMyReports.classList.remove('active-enha-pink');
-    tabFeed.classList.remove('active-enha-pink');
+    tabFeedKota.classList.remove('active-enha-pink');
 
     if (currentTab === 'my_reports') {
         tabMyReports.classList.add('active-enha-pink');
         dashboardTitle.textContent = 'Laporan Saya';
     } else {
-        tabFeed.classList.add('active-enha-pink');
+        tabFeedKota.classList.add('active-enha-pink');
         dashboardTitle.textContent = 'Feed Kota';
     }
 }
@@ -102,12 +102,12 @@ async function loadDashboardData(tab = currentTab, page = currentPage) {
     const response = await requestAPI(`/api/report/?tab=${tab}&page=${page}`, 'GET');
 
     if (response && response.status === 200) {
-        const allReports = response.data.results || [];
+        const reports = response.data.results || [];
         const totalData = response.data.count || 0;
 
         totalPages = Math.ceil(totalData / 10);
 
-        renderList(allReports);
+        renderList(reports);
         renderPagination();
         loadSummaryStats();
     } else {
@@ -180,53 +180,62 @@ function renderList(reports) {
         return;
     }
 
-    listContainer.innerHTML = reports.map(function (report) {
-        const progress = getProgressByStatus(report.status);
-        const badgeClass = getBadgeClass(report.status);
-        const formattedDate = formatDate(report.updated_at);
-        let actionButton = '';
+    listContainer.innerHTML = `
+        <div style="display:flex !important; flex-direction:column !important; gap:16px !important; width:100% !important;">
+            ${reports.map(function (report) {
+                const progress = getProgressByStatus(report.status);
+                const badgeClass = getBadgeClass(report.status);
+                const formattedDate = formatDate(report.updated_at);
+                const reporterName = report.reporter_name || report.reporter || 'Warga Anonim';
 
-        if (report.status === 'DRAFT' && report.is_owner === true) {
-            actionButton = `
-                <button type="button" class="btn btn-sm btn-outline-secondary mt-3" onclick="editDraft(${report.id})">
-                    <i class="bi bi-pencil-square me-1"></i>Edit Draft
-                </button>
-            `;
-        }
+                let actionButton = '';
 
-        return `
-            <div class="card border-0 shadow-sm mb-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div>
-                            <h5 class="fw-bold mb-1">${escapeHtml(report.title)}</h5>
-                            <p class="small text-muted mb-0">
-                                <i class="bi bi-person-circle me-1"></i>${escapeHtml(report.reporter)}
-                                <span class="mx-1">•</span>
-                                <i class="bi bi-clock me-1"></i>${formattedDate}
-                            </p>
+                if (report.status === 'DRAFT' && report.is_owner === true) {
+                    actionButton = `
+                        <button type="button" class="btn btn-sm btn-secondary fw-bold mt-3" onclick="editDraft(${report.id})">
+                            <i class="bi bi-pencil-square me-1"></i>Edit Draft
+                        </button>
+                    `;
+                }
+
+                return `
+                    <div class="col" style="display:block !important; width:100% !important; max-width:100% !important; flex:0 0 100% !important; padding:0 !important;">
+                        <div class="card border-0 shadow-sm" style="width:100% !important;">
+                            <div class="card-body" style="padding:18px !important;">
+                                <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+                                    <div style="min-width:0;">
+                                        <h5 class="fw-bold mb-1" style="word-break:break-word;">${escapeHtml(report.title)}</h5>
+                                        <p class="small text-muted mb-0">
+                                            <i class="bi bi-person-circle me-1"></i>${escapeHtml(reporterName)}
+                                            <span class="mx-1">•</span>
+                                            <i class="bi bi-clock me-1"></i>${formattedDate}
+                                        </p>
+                                    </div>
+                                    <span class="badge ${badgeClass}" style="flex-shrink:0;">${escapeHtml(report.status)}</span>
+                                </div>
+
+                                <p class="mb-2" style="word-break:break-word;">${escapeHtml(report.description)}</p>
+
+                                <p class="small text-muted mb-3">
+                                    <i class="bi bi-geo-alt-fill me-1"></i>${escapeHtml(report.location)}
+                                    <span class="mx-1">•</span>
+                                    <i class="bi bi-tag-fill me-1"></i>${escapeHtml(report.category)}
+                                </p>
+
+                                <div class="progress" style="height:10px;">
+                                    <div class="progress-bar ${progress.className}" role="progressbar" style="width:${progress.value}%;" aria-valuenow="${progress.value}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+
+                                <p class="small text-muted mt-2 mb-0">${progress.text}</p>
+
+                                ${actionButton}
+                            </div>
                         </div>
-                        <span class="badge ${badgeClass}">${escapeHtml(report.status)}</span>
                     </div>
-
-                    <p class="mb-2">${escapeHtml(report.description)}</p>
-
-                    <p class="small text-muted mb-3">
-                        <i class="bi bi-geo-alt-fill me-1"></i>${escapeHtml(report.location)}
-                        <span class="mx-1">•</span>
-                        <i class="bi bi-tag-fill me-1"></i>${escapeHtml(report.category)}
-                    </p>
-
-                    <div class="progress" style="height: 10px;">
-                        <div class="progress-bar ${progress.className}" role="progressbar" style="width: ${progress.value}%;" aria-valuenow="${progress.value}" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    <p class="small text-muted mt-2 mb-0">${progress.text}</p>
-
-                    ${actionButton}
-                </div>
-            </div>
-        `;
-    }).join('');
+                `;
+            }).join('')}
+        </div>
+    `;
 }
 
 function renderPagination() {
@@ -275,51 +284,27 @@ function renderPagination() {
 }
 
 async function editDraft(id) {
-    const accessToken = localStorage.getItem('access_token');
+    const response = await requestAPI(`/api/report/${id}/`, 'GET');
 
-    if (!accessToken) {
-        alert('Sesi login tidak ditemukan. Silakan login ulang.');
-        window.location.hash = '#login';
-        return;
-    }
+    if (response.status === 200 && response.data) {
+        const report = response.data;
 
-    const response = await fetch(`${API_BASE_URL}/api/report/${id}/`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
-        }
-    });
-
-    let report = null;
-
-    try {
-        report = await response.json();
-    } catch (error) {
-        report = null;
-    }
-
-    if (response.status === 200 && report) {
         editingReportId = id;
 
-        document.getElementById('reportTitle').value = report.title || '';
-        document.getElementById('reportCategory').value = report.category || '';
-        document.getElementById('reportLocation').value = report.location || '';
-        document.getElementById('reportDescription').value = report.description || '';
+        document.getElementById('inputTitle').value = report.title || '';
+        document.getElementById('inputCategory').value = report.category || '';
+        document.getElementById('inputLocation').value = report.location || '';
+        document.getElementById('inputDescription').value = report.description || '';
 
         const modalTitle = document.getElementById('reportModalLabel');
         if (modalTitle) {
             modalTitle.innerHTML = '<i class="bi bi-pencil-square me-2"></i>Edit Draft Laporan';
         }
 
-        const reportModal = new bootstrap.Modal(document.getElementById('reportModal'));
+        const modalElement = document.getElementById('reportModal');
+        const reportModal = bootstrap.Modal.getOrCreateInstance(modalElement);
         reportModal.show();
-    } else if (response.status === 401) {
-        alert('Sesi login tidak valid. Silakan login ulang.');
-        localStorage.clear();
-        window.location.hash = '#login';
     } else {
-        console.log(report);
         alert('Gagal mengambil data draft.');
     }
 }
@@ -336,10 +321,10 @@ async function submitReportForm(statusValue) {
     const reportForm = document.getElementById('reportForm');
 
     const payload = {
-        title: document.getElementById('reportTitle').value,
-        category: document.getElementById('reportCategory').value,
-        location: document.getElementById('reportLocation').value,
-        description: document.getElementById('reportDescription').value,
+        title: document.getElementById('inputTitle').value,
+        category: document.getElementById('inputCategory').value,
+        location: document.getElementById('inputLocation').value,
+        description: document.getElementById('inputDescription').value,
         status: statusValue
     };
 
@@ -356,40 +341,29 @@ async function submitReportForm(statusValue) {
         method = 'PUT';
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(payload)
-    });
-
-    let responseData = null;
-
-    try {
-        responseData = await response.json();
-    } catch (error) {
-        responseData = null;
-    }
+    const response = await requestAPI(endpoint, method, payload);
 
     if (response.status === 201 || response.status === 200) {
         const modalElement = document.getElementById('reportModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
 
-        if (modalInstance) {
-            modalInstance.hide();
+        modalInstance.hide();
+
+        if (reportForm) {
+            reportForm.reset();
         }
 
-        reportForm.reset();
         editingReportId = null;
+
+        if (statusValue === 'DRAFT') {
+            alert('Laporan berhasil disimpan sebagai DRAFT');
+        } else {
+            alert('Laporan berhasil diajukan');
+        }
+
         loadDashboardData(currentTab, currentPage);
-    } else if (response.status === 401) {
-        alert('Sesi login tidak valid. Silakan login ulang.');
-        localStorage.clear();
-        window.location.hash = '#login';
     } else {
-        console.log(responseData);
+        console.log(response.data);
         alert('Gagal menyimpan laporan.');
     }
 }
@@ -398,11 +372,13 @@ function resetReportModal() {
     editingReportId = null;
 
     const reportForm = document.getElementById('reportForm');
+
     if (reportForm) {
         reportForm.reset();
     }
 
     const modalTitle = document.getElementById('reportModalLabel');
+
     if (modalTitle) {
         modalTitle.innerHTML = '<i class="bi bi-pencil-square me-2"></i>Buat Laporan Baru';
     }

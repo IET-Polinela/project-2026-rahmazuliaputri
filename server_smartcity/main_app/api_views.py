@@ -30,10 +30,7 @@ class ReportViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(reporter=user)
 
         elif tab == 'feed':
-            queryset = queryset.filter(
-                ~Q(reporter=user),
-                ~Q(status='DRAFT')
-            )
+            queryset = queryset.exclude(status='DRAFT')
 
         else:
             queryset = queryset.filter(

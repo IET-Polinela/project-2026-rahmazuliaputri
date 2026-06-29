@@ -1,7 +1,22 @@
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-Env/
-.env
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Django
 db.sqlite3
+media/
+
+# Node / Playwright
+node_modules/
+playwright-report/
+test-results/
+
+# Environment
+.env
+venv/
+Env/
